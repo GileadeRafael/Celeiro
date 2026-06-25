@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Music, Sparkles, FolderPlus, AlignLeft, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { X, Music, Sparkles, FolderPlus, AlignLeft, Image as ImageIcon } from 'lucide-react';
 
 interface PlaylistModalProps {
   isOpen: boolean;
@@ -14,20 +14,34 @@ const PRESET_COVERS = [
   { id: '1', name: 'Adoração Profunda', url: 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=600&q=80' },
   { id: '2', name: 'Luzes do Altar', url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80' },
   { id: '3', name: 'Louvor e Comunhão', url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80' },
-  { id: '4', name: 'Momento de Paz', url: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=600&q=80' },
+  { id: '4', name: 'Céu e Paz', url: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80' },
 ];
 
 export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistModalProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [customUrl, setCustomUrl] = useState('');
+  const [uploadedCover, setUploadedCover] = useState<string>('');
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const currentCover = selectedPreset 
     ? (PRESET_COVERS.find(c => c.id === selectedPreset)?.url || DEFAULT_C_COVER)
-    : (customUrl.trim() || DEFAULT_C_COVER);
+    : (uploadedCover || DEFAULT_C_COVER);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setUploadedCover(reader.result);
+          setSelectedPreset(null);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +56,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
     // Reset fields
     setName('');
     setDescription('');
-    setCustomUrl('');
+    setUploadedCover('');
     setSelectedPreset(null);
     onClose();
   };
@@ -64,10 +78,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
           <div className="absolute inset-0 bg-gradient-to-b from-[#fa2d48]/5 via-transparent to-black/40 pointer-events-none" />
 
           <div className="relative z-10 text-left">
-            <span className="text-[10px] font-extrabold text-[#fa2d48] uppercase tracking-widest bg-[#fa2d48]/10 px-2.5 py-1 rounded-full border border-[#fa2d48]/20">
-              Visualização 16:9
-            </span>
-            <h4 className="text-sm font-black text-white mt-4">Capa da sua Playlist</h4>
+            <h4 className="text-sm font-black text-white mt-1">Capa da sua Playlist</h4>
             <p className="text-[11px] text-stone-400 mt-1">Veja em tempo real como ficará a identidade visual da sua coleção de louvor.</p>
           </div>
 
@@ -165,7 +176,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
               {/* Cover Image Selection Options */}
               <div>
                 <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2 px-1">
-                  Selecione ou Cole uma Imagem de Capa
+                  Escolha uma capa predefinida
                 </label>
 
                 {/* Cover presets */}
@@ -176,7 +187,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                       key={preset.id}
                       onClick={() => {
                         setSelectedPreset(preset.id);
-                        setCustomUrl('');
+                        setUploadedCover('');
                       }}
                       className={`relative aspect-[16/9] rounded-lg overflow-hidden border transition-all cursor-pointer group ${
                         selectedPreset === preset.id
@@ -198,31 +209,50 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                   ))}
                 </div>
 
-                {/* Custom URL Input with indicator */}
-                <div className="relative flex items-center">
-                  <LinkIcon className="absolute left-3.5 w-4 h-4 text-stone-500" />
-                  <input
-                    type="url"
-                    value={customUrl}
-                    onChange={(e) => {
-                      setCustomUrl(e.target.value);
-                      setSelectedPreset(null);
-                    }}
-                    placeholder="Ou cole o link de uma imagem personalizada (ex: https://...)"
-                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
-                  />
-                  {customUrl && (
-                    <button 
-                      type="button"
-                      onClick={() => setCustomUrl('')}
-                      className="absolute right-3.5 text-xs text-stone-500 hover:text-white"
+                {/* File Upload Area */}
+                <div className="mt-4">
+                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2 px-1">
+                    Ou envie uma imagem do seu dispositivo
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      id="playlist-cover-upload"
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="playlist-cover-upload"
+                      className="flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-[#fa2d48]/50 bg-[#121214] hover:bg-[#121214]/80 rounded-xl py-4 px-4 text-center cursor-pointer transition-all group"
                     >
-                      Limpar
-                    </button>
-                  )}
+                      <ImageIcon className="w-6 h-6 text-stone-500 group-hover:text-[#fa2d48] mb-1.5 transition-colors" />
+                      {uploadedCover ? (
+                        <div className="space-y-1">
+                          <span className="text-xs font-bold text-emerald-400 block">✓ Imagem carregada com sucesso</span>
+                          <span className="text-[10px] text-stone-500 block">Clique para alterar a imagem</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <span className="text-xs font-bold text-stone-300 group-hover:text-white transition-colors">Escolher imagem de capa</span>
+                          <span className="text-[10px] text-stone-500 block">Formatos aceitos: JPG, PNG, WEBP</span>
+                        </div>
+                      )}
+                    </label>
+                    {uploadedCover && (
+                      <button 
+                        type="button"
+                        onClick={() => setUploadedCover('')}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 text-stone-400 hover:text-white text-xs hover:bg-black/80 transition-all cursor-pointer"
+                        title="Remover imagem enviada"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                {!selectedPreset && !customUrl && (
+                {!selectedPreset && !uploadedCover && (
                   <p className="text-[10px] text-[#fa2d48] mt-2 font-semibold flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#fa2d48] animate-pulse" />
                     Capa padrão com um "C" será definida automaticamente.
