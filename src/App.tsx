@@ -688,7 +688,16 @@ export default function App() {
   ];
 
   return (
-    <div id="celeiro-app-wrapper" className="flex h-screen bg-[#1f1f1f] font-sans text-stone-200 overflow-hidden">
+    <div 
+      id="celeiro-app-wrapper" 
+      className="flex h-screen font-sans text-stone-200 overflow-hidden bg-stone-950 relative"
+      style={{
+        backgroundImage: "radial-gradient(circle at center, rgba(20,20,20,0.4) 0%, rgba(10,10,10,0.85) 100%), url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1974&auto=format&fit=crop')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       
       {/* 1. Left Sidebar menu */}
       <Sidebar 
@@ -709,8 +718,8 @@ export default function App() {
       />
 
       {/* 2. Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-h-0 p-4 pl-0 bg-[#1f1f1f]">
-        <div className="flex-1 flex flex-col min-h-0 bg-[#1f1f1f]/40 border border-white/10 rounded-[24px] backdrop-blur-xl shadow-2xl overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-h-0 p-6 pl-0 bg-transparent">
+        <div className="flex-1 flex flex-col min-h-0 bg-stone-900/40 border border-white/10 rounded-[28px] backdrop-blur-[24px] shadow-2xl overflow-hidden relative">
           
           {/* Top Header toolbar */}
           <Header 
@@ -728,6 +737,8 @@ export default function App() {
                 handlePlayTrack(randId, shuffled);
               }
             }}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
           />
 
         {/* Offline Global Warning Bar banner */}
@@ -934,40 +945,44 @@ export default function App() {
                 </div>
               )}
 
-              {/* TAB 2: NOVIDADES (Browse) */}
+              {/* TAB 2: OUVINDO AGORA (Browse) */}
               {activeTab === 'browse' && !selectedPlaylistId && (
                 <div id="browse-view-pane" className="space-y-8 animate-fade-in">
                   
-                  {/* Novidades Title */}
-                  <h2 className="text-[32px] font-extrabold text-white tracking-tight pt-2">Novidades</h2>
-
-                  {/* Banners Slider (Functional Carousel) */}
+                  {/* Banners Slider (Functional Carousel of TRACK_LIST) */}
                   <div className="relative group/slider overflow-hidden rounded-[24px]">
                     <div 
                       ref={sliderRef}
-                      className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-mandatory pr-6 pb-2"
+                      className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-mandatory pr-6 pb-3"
                     >
-                      {featuredBanners.map((banner) => (
-                        <div 
-                          key={banner.trackId + banner.title}
-                          className="flex flex-col flex-shrink-0 w-[170px] md:w-[210px] snap-start group/card cursor-pointer" 
-                          onClick={() => handlePlayTrack(banner.trackId, TRACK_LIST.map(t => t.id))}
-                        >
-                          <div className="relative aspect-square rounded-[24px] overflow-hidden border border-white/10 bg-stone-900 shadow-md">
-                            <img src={banner.cover} className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110" />
-                            
-                            {/* Play Button hover overlay */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                              <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-350">
-                                <Play className="w-5 h-5 fill-current text-black ml-0.5" />
+                      {TRACK_LIST.map((track) => {
+                        const isThisActive = currentTrackId === track.id;
+                        return (
+                          <div 
+                            key={'slider-' + track.id}
+                            className="flex flex-col flex-shrink-0 w-[140px] md:w-[170px] snap-start group/card cursor-pointer" 
+                            onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
+                          >
+                            <div className="relative aspect-square rounded-[24px] overflow-hidden border border-white/10 bg-stone-900 shadow-md">
+                              <img src={track.coverUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-115" />
+                              
+                              {/* Play Button hover overlay */}
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-350">
+                                  {isThisActive && isPlaying ? (
+                                    <Pause className="w-4 h-4 fill-current text-black" />
+                                  ) : (
+                                    <Play className="w-4 h-4 fill-current text-black ml-0.5" />
+                                  )}
+                                </div>
                               </div>
                             </div>
+                            
+                            <h3 className="text-xs font-bold text-white mt-3 leading-tight group-hover/card:text-[#fa2d48] transition-colors font-sans truncate">{track.title}</h3>
+                            <span className="text-[10px] text-stone-400 mt-0.5 block truncate">{track.artist}</span>
                           </div>
-                          
-                          <h3 className="text-sm font-bold text-white mt-3 leading-tight group-hover/card:text-[#fa2d48] transition-colors font-sans truncate">{banner.title}</h3>
-                          <span className="text-[11px] text-[#8e8e93] mt-0.5 block truncate">{banner.subtitle}</span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Left overlay arrow slider chevron */}
@@ -976,7 +991,7 @@ export default function App() {
                         e.stopPropagation();
                         scrollSlider('left');
                       }}
-                      className="absolute top-[40%] -left-2 -translate-y-1/2 w-8 h-12 rounded-r-md bg-black/45 hover:bg-black/65 border-r border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
+                      className="absolute top-[40%] left-2 -translate-y-1/2 w-8 h-12 rounded-lg bg-black/55 hover:bg-black/75 border border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95 shadow-md"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -987,240 +1002,152 @@ export default function App() {
                         e.stopPropagation();
                         scrollSlider('right');
                       }}
-                      className="absolute top-[40%] -right-2 -translate-y-1/2 w-8 h-12 rounded-l-md bg-black/45 hover:bg-black/65 border-l border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
+                      className="absolute top-[40%] right-2 -translate-y-1/2 w-8 h-12 rounded-lg bg-black/55 hover:bg-black/75 border border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95 shadow-md"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
 
-                  {/* Melhores músicas novas section */}
-                  <section className="pt-2">
-                    <div className="flex items-center gap-1.5 mb-5 cursor-pointer hover:text-[#fa2d48] group w-fit">
-                      <h3 className="text-[20px] font-bold text-white group-hover:text-[#fa2d48] transition-colors tracking-tight font-sans">
-                        Melhores músicas novas
-                      </h3>
-                      <span className="text-lg font-bold text-[#8e8e93] group-hover:text-[#fa2d48] transition-colors">&gt;</span>
-                    </div>
+                  {/* Two Column Layout (Next up & Popular Playlists) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+                    
+                    {/* Column 1: Next up */}
+                    <section className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/5">
+                          <Play className="w-4 h-4 text-white fill-current" />
+                        </div>
+                        <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
+                          Seguintes (Next Up)
+                        </h3>
+                      </div>
 
-                    {/* 4-Column Track List Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
-                      {/* Column 1 */}
-                      <div className="flex flex-col space-y-3">
-                        {TRACK_LIST.slice(0, 4).map((track) => {
-                          const isThisActive = currentTrackId === track.id;
-                          return (
-                            <div
-                              key={track.id}
-                              id={`track-item-col1-${track.id}`}
-                              onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
-                              className={`flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.05] group transition-all cursor-pointer ${
-                                isThisActive ? 'bg-white/[0.05]' : ''
-                              }`}
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="relative w-11 h-11 rounded-md overflow-hidden flex-shrink-0 border border-white/5">
-                                  <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    {isThisActive && isPlaying ? (
-                                      <Pause className="w-4 h-4 text-white fill-current" />
-                                    ) : (
+                      <div className="space-y-2">
+                        {(() => {
+                          const nextTracks = !currentTrackId 
+                            ? TRACK_LIST.slice(0, 5) 
+                            : (() => {
+                                const currentIndex = TRACK_LIST.findIndex(t => t.id === currentTrackId);
+                                if (currentIndex === -1) return TRACK_LIST.slice(0, 5);
+                                const list = [];
+                                for (let i = 1; i <= 5; i++) {
+                                  const nextIndex = (currentIndex + i) % TRACK_LIST.length;
+                                  list.push(TRACK_LIST[nextIndex]);
+                                }
+                                return list;
+                              })();
+
+                          return nextTracks.map((track) => {
+                            const isThisActive = currentTrackId === track.id;
+                            const isFav = favorites.includes(track.id);
+                            return (
+                              <div
+                                key={'next-up-' + track.id}
+                                onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
+                                className="flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.05] group transition-all cursor-pointer border border-transparent hover:border-white/5"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
+                                    <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                                       <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                                    )}
+                                    </div>
+                                  </div>
+
+                                  <div className="min-w-0">
+                                    <span className={`block text-xs font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
+                                      {track.title}
+                                    </span>
+                                    <span className="block text-[10px] text-stone-400 truncate mt-0.5">
+                                      {track.artist}
+                                    </span>
                                   </div>
                                 </div>
 
-                                <div className="min-w-0">
-                                  <span className={`block text-[13.5px] font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
-                                    {track.title}
-                                    {track.isExplicit && (
-                                      <span className="ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 bg-white/[0.1] rounded text-[8px] font-black text-stone-400 select-none">
-                                        E
-                                      </span>
-                                    )}
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] font-mono text-stone-500 mr-2">
+                                    {track.duration}
                                   </span>
-                                  <span className="block text-[11px] text-[#8e8e93] truncate mt-0.5 group-hover:text-stone-300">
-                                    {track.artist}
-                                  </span>
+
+                                  {/* Favorite Button */}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleToggleFavorite(track.id);
+                                    }}
+                                    className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                      isFav 
+                                        ? 'text-[#fa2d48] bg-rose-500/10' 
+                                        : 'text-stone-500 hover:text-white hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-current' : ''}`} />
+                                  </button>
+
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      showToast(`Opções para: ${track.title}`);
+                                    }}
+                                    className="p-1.5 rounded-lg text-stone-500 hover:text-white hover:bg-white/5 transition-all opacity-0 group-hover:opacity-100"
+                                  >
+                                    <MoreHorizontal className="w-3.5 h-3.5" />
+                                  </button>
                                 </div>
                               </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </section>
 
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  showToast(`Opções para: ${track.title}`);
-                                }}
-                                className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </button>
-                            </div>
-                          );
-                        })}
+                    {/* Column 2: Popular Playlists */}
+                    <section className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/5">
+                          <Sparkles className="w-4 h-4 text-brand animate-pulse" />
+                        </div>
+                        <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
+                          Playlists Populares
+                        </h3>
                       </div>
 
-                      {/* Column 2 */}
-                      <div className="flex flex-col space-y-3">
-                        {TRACK_LIST.slice(4, 8).map((track) => {
-                          const isThisActive = currentTrackId === track.id;
-                          return (
-                            <div
-                              key={track.id}
-                              id={`track-item-col2-${track.id}`}
-                              onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
-                              className={`flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.05] group transition-all cursor-pointer ${
-                                isThisActive ? 'bg-white/[0.05]' : ''
-                              }`}
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="relative w-11 h-11 rounded-md overflow-hidden flex-shrink-0 border border-white/5">
-                                  <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    {isThisActive && isPlaying ? (
-                                      <Pause className="w-4 h-4 text-white fill-current" />
-                                    ) : (
-                                      <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="min-w-0">
-                                  <span className={`block text-[13.5px] font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
-                                    {track.title}
-                                    {track.isExplicit && (
-                                      <span className="ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 bg-white/[0.1] rounded text-[8px] font-black text-stone-400 select-none">
-                                        E
-                                      </span>
-                                    )}
-                                  </span>
-                                  <span className="block text-[11px] text-[#8e8e93] truncate mt-0.5 group-hover:text-stone-300">
-                                    {track.artist}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  showToast(`Opções para: ${track.title}`);
-                                }}
-                                className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </button>
+                      <div className="grid grid-cols-2 gap-3">
+                        {[
+                          { id: 'pop-1', name: 'Day at the Park', gradient: 'bg-gradient-to-br from-emerald-500 to-teal-700', tracks: ['track-1', 'track-2', 'track-3'] },
+                          { id: 'pop-2', name: 'Feeling Happy', gradient: 'bg-gradient-to-br from-amber-400 to-yellow-600', tracks: ['track-4', 'track-5'] },
+                          { id: 'pop-3', name: 'Positivity', gradient: 'bg-gradient-to-br from-blue-500 to-cyan-600', tracks: ['track-6', 'track-7'] },
+                          { id: 'pop-4', name: 'Morning Commute', gradient: 'bg-gradient-to-br from-orange-500 to-amber-600', tracks: ['track-12', 'track-13'] },
+                          { id: 'pop-5', name: 'Joy', gradient: 'bg-gradient-to-br from-orange-600 to-red-600', tracks: ['track-8', 'track-9'] },
+                          { id: 'pop-6', name: 'Feeling Confident', gradient: 'bg-gradient-to-br from-pink-500 to-rose-600', tracks: ['track-14', 'track-15'] },
+                          { id: 'pop-7', name: 'Starting Over', gradient: 'bg-gradient-to-br from-stone-500 to-stone-700', tracks: ['track-10', 'track-11'] },
+                          { id: 'pop-8', name: 'Good News!', gradient: 'bg-gradient-to-br from-green-600 to-emerald-800', tracks: ['track-16', 'track-3'] },
+                        ].map((playlist) => (
+                          <div
+                            key={playlist.id}
+                            onClick={() => {
+                              handlePlayTrack(playlist.tracks[0], playlist.tracks);
+                              showToast(`Sintonizando Playlist Pop: ${playlist.name}`);
+                            }}
+                            className="flex items-center gap-3 p-2 bg-[#1c1917]/30 border border-white/5 rounded-xl hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer group"
+                          >
+                            <div className={`w-11 h-11 rounded-xl ${playlist.gradient} flex items-center justify-center font-bold text-xs text-white shadow-inner flex-shrink-0 group-hover:scale-105 transition-transform duration-300`}>
+                              ♫
                             </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Column 3 */}
-                      <div className="flex flex-col space-y-3">
-                        {TRACK_LIST.slice(8, 12).map((track) => {
-                          const isThisActive = currentTrackId === track.id;
-                          return (
-                            <div
-                              key={track.id}
-                              id={`track-item-col3-${track.id}`}
-                              onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
-                              className={`flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.05] group transition-all cursor-pointer ${
-                                isThisActive ? 'bg-white/[0.05]' : ''
-                              }`}
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="relative w-11 h-11 rounded-md overflow-hidden flex-shrink-0 border border-white/5">
-                                  <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    {isThisActive && isPlaying ? (
-                                      <Pause className="w-4 h-4 text-white fill-current" />
-                                    ) : (
-                                      <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="min-w-0">
-                                  <span className={`block text-[13.5px] font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
-                                    {track.title}
-                                    {track.isExplicit && (
-                                      <span className="ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 bg-white/[0.1] rounded text-[8px] font-black text-stone-400 select-none">
-                                        E
-                                      </span>
-                                    )}
-                                  </span>
-                                  <span className="block text-[11px] text-[#8e8e93] truncate mt-0.5 group-hover:text-stone-300">
-                                    {track.artist}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  showToast(`Opções para: ${track.title}`);
-                                }}
-                                className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </button>
+                            <div className="min-w-0">
+                              <span className="block text-xs font-semibold text-stone-200 group-hover:text-white transition-colors truncate">
+                                {playlist.name}
+                              </span>
+                              <span className="block text-[9px] text-stone-400">
+                                {playlist.tracks.length} músicas
+                              </span>
                             </div>
-                          );
-                        })}
+                          </div>
+                        ))}
                       </div>
+                    </section>
 
-                      {/* Column 4 */}
-                      <div className="flex flex-col space-y-3">
-                        {TRACK_LIST.slice(12, 16).map((track) => {
-                          const isThisActive = currentTrackId === track.id;
-                          return (
-                            <div
-                              key={track.id}
-                              id={`track-item-col4-${track.id}`}
-                              onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
-                              className={`flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.05] group transition-all cursor-pointer ${
-                                isThisActive ? 'bg-white/[0.05]' : ''
-                              }`}
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="relative w-11 h-11 rounded-md overflow-hidden flex-shrink-0 border border-white/5">
-                                  <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    {isThisActive && isPlaying ? (
-                                      <Pause className="w-4 h-4 text-white fill-current" />
-                                    ) : (
-                                      <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="min-w-0">
-                                  <span className={`block text-[13.5px] font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
-                                    {track.title}
-                                    {track.isExplicit && (
-                                      <span className="ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 bg-white/[0.1] rounded text-[8px] font-black text-stone-400 select-none">
-                                        E
-                                      </span>
-                                    )}
-                                  </span>
-                                  <span className="block text-[11px] text-[#8e8e93] truncate mt-0.5 group-hover:text-stone-300">
-                                    {track.artist}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  showToast(`Opções para: ${track.title}`);
-                                }}
-                                className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </section>
+                  </div>
                 </div>
               )}
 

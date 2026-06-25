@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Menu, Wifi, WifiOff, RefreshCw, Sparkles } from 'lucide-react';
+import { Search, Menu, Play, Music, Wifi, WifiOff, Sparkles } from 'lucide-react';
 
 interface HeaderProps {
   searchQuery: string;
@@ -10,6 +10,8 @@ interface HeaderProps {
   setIsMobileSidebarOpen: (isOpen: boolean) => void;
   onShuffleAll: () => void;
   onClearCache?: () => void;
+  activeTab: string;
+  setActiveTab: (tab: any) => void;
 }
 
 export default function Header({
@@ -20,11 +22,13 @@ export default function Header({
   isMobileSidebarOpen,
   setIsMobileSidebarOpen,
   onShuffleAll,
-  onClearCache
+  onClearCache,
+  activeTab,
+  setActiveTab
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-transparent border-b border-white/10 text-white">
-      {/* Left: Mobile Menu Trigger + Context Title */}
+      {/* Left: Mobile Menu Trigger */}
       <div className="flex items-center gap-4">
         <button
           id="mobile-menu-trigger"
@@ -33,34 +37,49 @@ export default function Header({
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="hidden sm:block">
-          <span className="text-xs font-mono text-brand/80 bg-brand/5 border border-brand/10 px-2 py-1 rounded-full flex items-center gap-1.5 font-semibold">
-            <Sparkles className="w-3 h-3 text-brand animate-pulse" />
-            SOM DIGITAL ACOUSTIC HQ
-          </span>
-        </div>
       </div>
 
-      {/* Middle: Apple Music search experience */}
-      <div className="flex-1 max-w-md mx-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-stone-500" />
-          <input
-            id="main-search-input"
-            type="text"
-            placeholder="Buscar músicas, artistas ou álbuns..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-9 pl-9 pr-4 text-sm bg-stone-900 hover:bg-stone-850 focus:bg-stone-950 text-white placeholder-stone-500 rounded-lg border border-[#261E17] focus:border-brand/50 outline-none transition-all"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-2 text-xs text-stone-500 hover:text-white"
-            >
-              Limpar
-            </button>
-          )}
+      {/* Middle: Centered Pill Navigation Tabs (Matches requested modal tabs) */}
+      <div className="flex-1 flex justify-center max-w-lg mx-auto">
+        <div className="flex p-1 bg-[#18181b]/85 border border-white/10 rounded-full backdrop-blur-md shadow-lg">
+          <button
+            onClick={() => setActiveTab('browse')}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === 'browse'
+                ? 'bg-[#fa2d48] text-white shadow-md'
+                : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>Ouvindo agora</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              setActiveTab('search');
+              setSearchQuery('');
+            }}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === 'search'
+                ? 'bg-[#fa2d48] text-white shadow-md'
+                : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Buscar</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('library-playlists')}
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              activeTab === 'library-playlists'
+                ? 'bg-[#fa2d48] text-white shadow-md'
+                : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Music className="w-3.5 h-3.5" />
+            <span>Playlists</span>
+          </button>
         </div>
       </div>
 
