@@ -188,8 +188,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
           
           <p className="text-xs text-stone-400 mt-2.5 px-4 leading-relaxed">
             {mode === 'signin' 
-              ? 'Entre com seu e-mail e senha para acessar seus favoritos, playlists e histórico.' 
-              : 'Crie uma conta para salvar músicas e ouvir as melhores acústicas brasileiras.'}
+              ? 'Entre com seu e-mail e senha para acessar seus favoritos, playlists e histórico de louvores.' 
+              : 'Crie uma conta para salvar suas canções favoritas, criar playlists e se conectar com os melhores louvores.'}
           </p>
 
           {/* Error Message Box */}
@@ -209,7 +209,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500" />
                   <input 
                     type="text" 
-                    placeholder="Ex: Rafael Silva"
+                    placeholder="Ex: Sarah Lima"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required

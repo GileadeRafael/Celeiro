@@ -609,7 +609,7 @@ export default function App() {
       coverUrl: coverUrl,
       tracks: [],
       type: 'custom',
-      creator: userProfile?.name || 'Rafael da Silva',
+      creator: userProfile?.name || 'Adorador',
       updatedAt: 'Criada hoje'
     };
 
@@ -722,43 +722,43 @@ export default function App() {
   const featuredBanners = [
     {
       trackId: 'track-1',
-      title: 'Sertanejo VIP',
-      subtitle: 'Playlist Atualizada',
-      description: 'Zé Neto & Cristiano e Péricles são o destaque da playlist com "Fama de Louco (Ao Vivo)".',
-      buttonText: 'Prévia',
-      cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80',
+      title: 'Worship Nacional',
+      subtitle: 'Destaque da Semana',
+      description: 'Sinta a presença com "A Casa É Sua" da Casa Worship, o louvor mais ouvido da nossa plataforma.',
+      buttonText: 'Ouvir Agora',
+      cover: 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=800&auto=format&fit=crop&q=80',
     },
     {
-      trackId: 'track-6',
-      title: 'As Vozes, Vol. 1 (Ao Vivo)',
-      subtitle: 'Novo Álbum',
-      description: 'Péricles & Ferrugem trazem uma interpretação emocionante e rústica gravada no Celeiro Acústico.',
-      buttonText: 'Ouvir Álbum',
-      cover: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&auto=format&fit=crop&q=80',
+      trackId: 'track-2',
+      title: 'Lugar Secreto',
+      subtitle: 'Adoração Profunda',
+      description: 'Entre no seu quarto e feche a porta com a tocante ministração de Gabriela Rocha em seu grande sucesso.',
+      buttonText: 'Ministrar',
+      cover: 'https://images.unsplash.com/photo-1442468989248-8415785a93dd?w=800&auto=format&fit=crop&q=80',
+    },
+    {
+      trackId: 'track-3',
+      title: 'Galileu',
+      subtitle: 'Gospel Pop & Ritmo',
+      description: 'Cante e exalte o nome de Jesus com o louvor contagiante e alegre de Fernandinho.',
+      buttonText: 'Cantar Louvores',
+      cover: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&auto=format&fit=crop&q=80',
     },
     {
       trackId: 'track-14',
-      title: 'Pop hits Brasil',
-      subtitle: 'Playlist Atualizada',
-      description: 'Ouça "se joga", nova música de Os Garotin com Marina Sena e BK.',
-      buttonText: 'Ouvir Pop',
+      title: 'Todavia Me Alegrarei',
+      subtitle: 'Fé e Intimidade',
+      description: 'Mesmo no vento, mesmo na dor: encontre consolo e esperança com a tocante canção de Samuel Miranda.',
+      buttonText: 'Ouvir Hino',
       cover: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&auto=format&fit=crop&q=80',
     },
     {
-      trackId: 'track-11',
-      title: 'Lofi da Terra',
-      subtitle: 'Sessão Relaxante',
-      description: 'Celeiro Lofi traz beats calmos gravados ao redor da fogueira para acalmar seus estudos.',
-      buttonText: 'Relaxar',
-      cover: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop&q=80',
-    },
-    {
       trackId: 'track-15',
-      title: 'House Club VIP',
-      subtitle: 'Nova Playlist',
-      description: 'As melhores batidas de House diretamente do Celeiro Club para animar o seu dia.',
-      buttonText: 'Dançar',
-      cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop&q=80',
+      title: 'Abba',
+      subtitle: 'Momento de Devoção',
+      description: 'Laura Souguellis em uma interpretação íntima que nos aproxima do coração do Pai.',
+      buttonText: 'Entrar em Oração',
+      cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=800&auto=format&fit=crop&q=80',
     }
   ];
 
@@ -969,9 +969,9 @@ export default function App() {
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#261E17]/40 pb-6">
                     <div>
                       <h2 className="text-3xl font-extrabold tracking-tight text-white font-sans">
-                        {getGreeting()}, Rafael da Silva!
+                        {getGreeting()}, {userProfile ? userProfile.name : 'Adorador'}!
                       </h2>
-                      <p className="text-sm text-stone-400 mt-1">Sintonize o melhor do som acústico e roots. O que quer ouvir hoje?</p>
+                      <p className="text-sm text-stone-400 mt-1">Sintonize o melhor da música cristã, louvor e adoração. O que quer ouvir hoje?</p>
                     </div>
                     
                     {/* Estações recomendadas quick tag */}
@@ -1025,15 +1025,15 @@ export default function App() {
                     </div>
                   </section>
 
-                  {/* Mood sections matching standard country life */}
+                  {/* Mood sections matching standard worship moments */}
                   <section>
-                    <h3 className="text-lg font-bold text-white mb-4">Escolha seu clima acústico</h3>
+                    <h3 className="text-lg font-bold text-white mb-4">Escolha seu momento de louvor</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       {[
-                        { title: 'Fogueira no Campo', desc: 'Indie Folk rústico', color: 'from-[#451A03] to-stone-950', genre: 'Indie Folk' },
-                        { title: 'Café na Roça', desc: 'Lofi orgânico', color: 'from-[#3B2314] to-stone-950', genre: 'Lofi' },
-                        { title: 'Viola de Ouro', desc: 'Modões sertanejos', color: 'from-[#422006] to-stone-950', genre: 'Sertanejo' },
-                        { title: 'Roda de Varanda', desc: 'Samba e pagode', color: 'from-[#500724] to-stone-950', genre: 'Pagode' },
+                        { title: 'Adoração Profunda', desc: 'Canções de intimidade', color: 'from-[#4c0519] to-stone-950', genre: 'Adoração' },
+                        { title: 'Louvor Festivo', desc: 'Canções alegres de celebração', color: 'from-[#1e3a8a] to-stone-950', genre: 'Gospel Pop' },
+                        { title: 'Clássicos da Fé', desc: 'Hinos tradicionais e harpa', color: 'from-[#065f46] to-stone-950', genre: 'Pentecostal' },
+                        { title: 'Devocional Diário', desc: 'Para momentos de oração', color: 'from-[#111827] to-stone-950', genre: 'Adoração' },
                       ].map((mood, idx) => (
                         <div
                           key={idx}
@@ -1463,8 +1463,8 @@ export default function App() {
                   {playbackHistory.length === 0 ? (
                     <div className="py-16 text-center border border-dashed border-[#261E17] rounded-xl">
                       <Clock className="w-8 h-8 text-stone-600 mx-auto mb-2" />
-                      <p className="text-sm text-stone-400 font-semibold">Sem rastro de poeira</p>
-                      <p className="text-xs text-stone-500 mt-1">As músicas que você ouvir vão aparecer aqui para você nunca perder uma moda de viola.</p>
+                      <p className="text-sm text-stone-400 font-semibold">Nenhum louvor ouvido recentemente</p>
+                      <p className="text-xs text-stone-500 mt-1">Os louvores que você ouvir vão aparecer aqui para você revisitá-los facilmente.</p>
                     </div>
                   ) : (
                     <div className="bg-stone-950/40 rounded-xl border border-[#261E17]/40 overflow-hidden">
