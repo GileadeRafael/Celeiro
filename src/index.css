@@ -4,8 +4,8 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --color-brand: #fa2d48;
-  --color-brand-hover: #e0203a;
+  --color-brand: #dfb26f;
+  --color-brand-hover: #cf9e58;
 }
 
 /* Custom Web Scrollbars */
@@ -19,12 +19,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(250, 45, 72, 0.15); /* brand tint */
+  background: rgba(223, 178, 111, 0.15); /* brand tint */
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(250, 45, 72, 0.4);
+  background: rgba(223, 178, 111, 0.4);
 }
 
 /* Fluid Keyframe Animations */
@@ -79,8 +79,8 @@ input[type="range"]::-webkit-slider-thumb {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #fa2d48; /* brand red */
-  box-shadow: 0 0 5px rgba(250, 45, 72, 0.5);
+  background: #dfb26f; /* brand gold */
+  box-shadow: 0 0 5px rgba(223, 178, 111, 0.5);
   cursor: pointer;
   transition: transform 0.1s;
 }

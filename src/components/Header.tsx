@@ -46,7 +46,7 @@ export default function Header({
             onClick={() => setActiveTab('browse')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'browse'
-                ? 'bg-[#fa2d48] text-white shadow-md'
+                ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
@@ -61,7 +61,7 @@ export default function Header({
             }}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'search'
-                ? 'bg-[#fa2d48] text-white shadow-md'
+                ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
@@ -73,7 +73,7 @@ export default function Header({
             onClick={() => setActiveTab('library-playlists')}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'library-playlists'
-                ? 'bg-[#fa2d48] text-white shadow-md'
+                ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >

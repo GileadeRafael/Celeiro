@@ -277,7 +277,7 @@ export default function ProfileModal({
         {/* Header Title */}
         <div className="text-left mb-6 border-b border-white/5 pb-4">
           <h3 className="text-xl font-extrabold tracking-tight flex items-center gap-2">
-            <User className="w-5 h-5 text-[#fa2d48]" />
+            <User className="w-5 h-5 text-[#dfb26f]" />
             Configurações da Conta
           </h3>
           <p className="text-xs text-stone-400 mt-1">Gerencie sua identidade, altere sua senha e visualize seu plano de assinatura</p>
@@ -300,7 +300,7 @@ export default function ProfileModal({
               /* IMAGE CROPPER IN-VIEW */
               <div className="flex flex-col items-center justify-center py-4 bg-black/25 rounded-2xl p-4 border border-white/5">
                 <span className="text-[10px] font-bold text-stone-300 mb-3.5 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Move className="w-3.5 h-3.5 text-[#fa2d48]" />
+                  <Move className="w-3.5 h-3.5 text-[#dfb26f]" />
                   Ajuste sua Foto
                 </span>
 
@@ -314,7 +314,7 @@ export default function ProfileModal({
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
-                  className="w-40 h-40 rounded-full overflow-hidden border-2 border-[#fa2d48] relative cursor-grab active:cursor-grabbing bg-[#121214] shadow-inner"
+                  className="w-40 h-40 rounded-full overflow-hidden border-2 border-[#dfb26f] relative cursor-grab active:cursor-grabbing bg-[#121214] shadow-inner"
                 >
                   <img 
                     ref={imageRef}
@@ -341,9 +341,9 @@ export default function ProfileModal({
                     step="0.02"
                     value={zoom}
                     onChange={(e) => setZoom(parseFloat(e.target.value))}
-                    className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+                    className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                     style={{
-                      background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((zoom - 1) / 2 * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((zoom - 1) / 2 * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                      background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((zoom - 1) / 2 * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((zoom - 1) / 2 * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                     }}
                   />
                   <span className="text-[10px] font-mono text-stone-400 shrink-0 w-8 text-right">
@@ -366,7 +366,7 @@ export default function ProfileModal({
                   <button
                     type="button"
                     onClick={handleApplyCrop}
-                    className="flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-[#fa2d48] hover:bg-[#ff2d55] text-white flex items-center justify-center gap-1 transition-all cursor-pointer"
+                    className="flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-[#dfb26f] hover:bg-[#cf9e58] text-stone-950 flex items-center justify-center gap-1 transition-all cursor-pointer"
                   >
                     <Check className="w-3 h-3" /> Aplicar
                   </button>
@@ -388,7 +388,7 @@ export default function ProfileModal({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 p-2 rounded-full bg-[#fa2d48] hover:bg-[#ff2d55] text-white transition-all shadow-md cursor-pointer hover:scale-110 active:scale-95"
+                    className="absolute bottom-0 right-0 p-2 rounded-full bg-[#dfb26f] hover:bg-[#cf9e58] text-stone-950 transition-all shadow-md cursor-pointer hover:scale-110 active:scale-95"
                     title="Alterar foto de perfil"
                   >
                     <Camera className="w-3.5 h-3.5" />
@@ -408,20 +408,20 @@ export default function ProfileModal({
             )}
 
             {/* Premium Subscription section */}
-            <div className="text-left bg-gradient-to-br from-[#1c1c1e] to-[#251719] border border-[#fa2d48]/15 rounded-2xl p-4.5 shadow-inner">
+            <div className="text-left bg-gradient-to-br from-[#1c1c1e] to-[#25211a] border border-[#dfb26f]/15 rounded-2xl p-4.5 shadow-inner">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-extrabold text-stone-400 uppercase tracking-wider">
                   Assinatura Celeiro
                 </span>
-                <span className="text-[9px] font-mono tracking-widest text-[#fa2d48]/90 bg-[#fa2d48]/10 border border-[#fa2d48]/15 px-2.5 py-1 rounded-full uppercase font-bold flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-[#fa2d48] animate-pulse" />
+                <span className="text-[9px] font-mono tracking-widest text-[#dfb26f]/90 bg-[#dfb26f]/10 border border-[#dfb26f]/15 px-2.5 py-1 rounded-full uppercase font-bold flex items-center gap-1">
+                  <Sparkles className="w-2.5 h-2.5 text-[#dfb26f] animate-pulse" />
                   EM BREVE
                 </span>
               </div>
 
               <div className="flex items-start gap-3 mt-3">
-                <div className="p-2 bg-[#fa2d48]/10 rounded-xl border border-[#fa2d48]/15 shrink-0 mt-0.5">
-                  <CreditCard className="w-4 h-4 text-[#fa2d48]" />
+                <div className="p-2 bg-[#dfb26f]/10 rounded-xl border border-[#dfb26f]/15 shrink-0 mt-0.5">
+                  <CreditCard className="w-4 h-4 text-[#dfb26f]" />
                 </div>
                 <div>
                   <h4 className="text-xs font-extrabold text-white flex items-center gap-1.5">
@@ -431,7 +431,7 @@ export default function ProfileModal({
                     Assinatura Celeiro VIP inclusa como cortesia de teste de desenvolvimento.
                   </p>
                   
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#fa2d48] mt-2.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#dfb26f] mt-2.5">
                     <Calendar className="w-3 h-3" />
                     <span>Válido até: 31/12/2026</span>
                   </div>
@@ -482,7 +482,7 @@ export default function ProfileModal({
 
                 {/* Password modification separator heading */}
                 <div className="pt-2 border-t border-white/5">
-                  <h4 className="text-[10px] font-extrabold text-[#fa2d48] uppercase tracking-wider flex items-center gap-1.5">
+                  <h4 className="text-[10px] font-extrabold text-[#dfb26f] uppercase tracking-wider flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5" />
                     Redefinir Senha de Acesso
                   </h4>
@@ -501,7 +501,7 @@ export default function ProfileModal({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Mínimo de 6 caracteres"
-                      className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                      className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#dfb26f] focus:ring-1 focus:ring-[#dfb26f] transition-all"
                     />
                   </div>
                 </div>
@@ -518,7 +518,7 @@ export default function ProfileModal({
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirme sua nova senha"
-                      className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                      className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#dfb26f] focus:ring-1 focus:ring-[#dfb26f] transition-all"
                     />
                   </div>
                 </div>
@@ -536,7 +536,7 @@ export default function ProfileModal({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-3 rounded-xl text-xs font-black bg-[#fa2d48] hover:bg-[#ff2d55] text-white flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#fa2d48]/15 hover:shadow-[#fa2d48]/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-[#dfb26f] hover:bg-[#cf9e58] text-stone-950 flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#dfb26f]/15 hover:shadow-[#dfb26f]/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
                 >
                   {loading ? (
                     <>

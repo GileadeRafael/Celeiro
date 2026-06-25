@@ -93,6 +93,41 @@ export default function App() {
   const [playbackHistory, setPlaybackHistory] = useState<string[]>([]);
   const [synthActive, setSynthActive] = useState<boolean>(false);
 
+  // Gemini Daily Recommendations State
+  const [recommendedTrackIds, setRecommendedTrackIds] = useState<string[]>([]);
+  const [recommendationsJustification, setRecommendationsJustification] = useState<string>('');
+  const [loadingRecommendations, setLoadingRecommendations] = useState<boolean>(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchRecommendations = async () => {
+      setLoadingRecommendations(true);
+      try {
+        const response = await fetch('/api/recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ history: playbackHistory }),
+        });
+        if (response.ok && active) {
+          const data = await response.json();
+          setRecommendedTrackIds(data.recommendedTrackIds || []);
+          setRecommendationsJustification(data.justification || '');
+        }
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      } finally {
+        if (active) setLoadingRecommendations(false);
+      }
+    };
+
+    fetchRecommendations();
+    return () => {
+      active = false;
+    };
+  }, [playbackHistory]);
+
   // Featured Carousel slider index (for Novidades/Browse view)
   const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
@@ -840,7 +875,7 @@ export default function App() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Buscar por músicas, artistas ou álbuns..."
-                    className="w-full pl-12 pr-12 py-3 bg-[#2c2c2e] border border-white/5 rounded-full text-sm text-white placeholder-stone-400 focus:outline-none focus:border-[#fa2d48]/40 focus:ring-1 focus:ring-[#fa2d48]/40 transition-all font-sans shadow-lg"
+                    className="w-full pl-12 pr-12 py-3 bg-[#2c2c2e] border border-white/5 rounded-full text-sm text-white placeholder-stone-400 focus:outline-none focus:border-[#dfb26f]/40 focus:ring-1 focus:ring-[#dfb26f]/40 transition-all font-sans shadow-lg"
                   />
                   {searchQuery && (
                     <button
@@ -902,7 +937,7 @@ export default function App() {
                     </h2>
                     <button 
                       onClick={() => setSearchQuery('')}
-                      className="text-xs text-[#fa2d48] hover:underline font-bold"
+                      className="text-xs text-[#dfb26f] hover:underline font-bold"
                     >
                       Limpar busca
                     </button>
@@ -1123,7 +1158,7 @@ export default function App() {
                               </div>
                             </div>
                             
-                            <h3 className="text-xs font-bold text-white mt-3 leading-tight group-hover/card:text-[#fa2d48] transition-colors font-sans truncate">{track.title}</h3>
+                            <h3 className="text-xs font-bold text-white mt-3 leading-tight group-hover/card:text-[#dfb26f] transition-colors font-sans truncate">{track.title}</h3>
                             <span className="text-[10px] text-stone-400 mt-0.5 block truncate">{track.artist}</span>
                           </div>
                         );
@@ -1156,39 +1191,42 @@ export default function App() {
                   {/* Two Column Layout (Next up & Popular Playlists) */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
                     
-                    {/* Column 1: Next up */}
+                    {/* Column 1: Recomendações Diárias */}
                     <section className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/5">
-                          <Play className="w-4 h-4 text-white fill-current" />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl text-[#dfb26f]">★</span>
+                          <div>
+                            <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
+                              Recomendações Diárias
+                            </h3>
+                          </div>
                         </div>
-                        <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
-                          Seguintes (Next Up)
-                        </h3>
                       </div>
 
                       <div className="space-y-2">
-                        {(() => {
-                          const nextTracks = !currentTrackId 
-                            ? TRACK_LIST.slice(0, 5) 
-                            : (() => {
-                                const currentIndex = TRACK_LIST.findIndex(t => t.id === currentTrackId);
-                                if (currentIndex === -1) return TRACK_LIST.slice(0, 5);
-                                const list = [];
-                                for (let i = 1; i <= 5; i++) {
-                                  const nextIndex = (currentIndex + i) % TRACK_LIST.length;
-                                  list.push(TRACK_LIST[nextIndex]);
-                                }
-                                return list;
-                              })();
+                        {loadingRecommendations ? (
+                          <div className="flex flex-col items-center justify-center py-12 text-center bg-white/[0.01] border border-white/[0.03] rounded-2xl">
+                            <Loader2 className="w-6 h-6 text-stone-400 animate-spin mb-3" />
+                            <p className="text-xs text-stone-400 font-bold">Analisando seu estilo musical...</p>
+                            <p className="text-[10px] text-stone-500 mt-1">Selecionando os melhores louvores.</p>
+                          </div>
+                        ) : (() => {
+                          const recommendedTracks = recommendedTrackIds
+                            .map(id => TRACK_LIST.find(t => t.id === id))
+                            .filter((t): t is typeof TRACK_LIST[0] => !!t);
 
-                          return nextTracks.map((track) => {
+                          const displayTracks = recommendedTracks.length > 0 
+                            ? recommendedTracks 
+                            : TRACK_LIST.slice(0, 5); // Fallback if list is empty
+
+                          return displayTracks.map((track) => {
                             const isThisActive = currentTrackId === track.id;
                             const isFav = favorites.includes(track.id);
                             return (
                               <div
-                                key={'next-up-' + track.id}
-                                onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
+                                key={'rec-' + track.id}
+                                onClick={() => handlePlayTrack(track.id, displayTracks.map(t => t.id))}
                                 className="flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.05] group transition-all cursor-pointer border border-transparent hover:border-white/5"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
@@ -1199,19 +1237,19 @@ export default function App() {
                                     </div>
                                   </div>
 
-                                  <div className="min-w-0">
-                                    <span className={`block text-xs font-bold truncate ${isThisActive ? 'text-[#fa2d48]' : 'text-white'}`}>
+                                  <div className="min-w-0 text-left">
+                                    <span className={`block text-xs font-bold truncate ${isThisActive ? 'text-[#dfb26f]' : 'text-white'}`}>
                                       {track.title}
                                     </span>
                                     <span className="block text-[10px] text-stone-400 truncate mt-0.5">
-                                      {track.artist}
+                                      {track.artist} • <span className="text-stone-500 font-medium">{track.genre}</span>
                                     </span>
                                   </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                   <span className="text-[10px] font-mono text-stone-500 mr-2">
-                                    {track.duration}
+                                    {Math.floor(track.duration / 60)}:{(track.duration % 60).toString().padStart(2, '0')}
                                   </span>
 
                                   {/* Favorite Button */}
@@ -1222,7 +1260,7 @@ export default function App() {
                                     }}
                                     className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                                       isFav 
-                                        ? 'text-[#fa2d48] bg-rose-500/10' 
+                                        ? 'text-[#dfb26f] bg-[#dfb26f]/10' 
                                         : 'text-stone-500 hover:text-white hover:bg-white/5'
                                     }`}
                                   >
@@ -1817,7 +1855,7 @@ export default function App() {
               </h3>
               <button 
                 onClick={handleClearQueue}
-                className="text-xs text-[#fa2d48] hover:underline font-bold transition-all"
+                className="text-xs text-[#dfb26f] hover:underline font-bold transition-all"
               >
                 Apagar
               </button>
@@ -1870,7 +1908,7 @@ export default function App() {
                             className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                             title="Remover"
                           >
-                            <MinusCircle className="w-5 h-5 text-[#fa2d48] fill-[#1c1c1e]" />
+                            <MinusCircle className="w-5 h-5 text-[#dfb26f] fill-[#1c1c1e]" />
                           </button>
                         </div>
 
@@ -1963,7 +2001,7 @@ export default function App() {
           id="custom-toast-notification"
           className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-stone-900/95 border border-white/10 text-white font-medium text-xs shadow-xl backdrop-blur-md animate-fade-in"
         >
-          <Sparkles className="w-3.5 h-3.5 text-[#fa2d48]" />
+          <Sparkles className="w-3.5 h-3.5 text-[#dfb26f]" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -1974,9 +2012,9 @@ export default function App() {
           <div className="flex flex-col items-center max-w-sm text-center px-6">
             <div className="relative mb-6">
               {/* Spinning glow ring */}
-              <div className="absolute inset-0 rounded-full border border-[#fa2d48]/10 animate-ping" />
-              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#fa2d48]/20 to-[#fa2d48]/5 border border-[#fa2d48]/25 flex items-center justify-center relative shadow-xl shadow-[#fa2d48]/10">
-                <Loader2 className="w-10 h-10 text-[#fa2d48] animate-spin absolute" style={{ animationDuration: '1.2s' }} />
+              <div className="absolute inset-0 rounded-full border border-[#dfb26f]/10 animate-ping" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#dfb26f]/20 to-[#dfb26f]/5 border border-[#dfb26f]/25 flex items-center justify-center relative shadow-xl shadow-[#dfb26f]/10">
+                <Loader2 className="w-10 h-10 text-[#dfb26f] animate-spin absolute" style={{ animationDuration: '1.2s' }} />
                 <Lock className="w-5 h-5 text-white absolute animate-pulse" />
               </div>
             </div>
@@ -1987,7 +2025,7 @@ export default function App() {
             </p>
             
             <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10">
-              <span className="w-2 h-2 rounded-full bg-[#fa2d48] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#dfb26f] animate-pulse" />
               <span className="text-[10px] font-mono tracking-wider text-stone-300 uppercase">
                 Conexão criptografada SSL
               </span>

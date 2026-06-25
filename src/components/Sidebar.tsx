@@ -60,8 +60,8 @@ export default function Sidebar({
       {/* Brand Logo - Celeiro Style */}
       <div className="pt-8 px-6 pb-2">
         <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleNavClick('browse')}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#fa2d48] to-[#ff5268] flex items-center justify-center shadow-md shadow-[#fa2d48]/20">
-            <Play className="w-4 h-4 text-white fill-current ml-0.5" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#dfb26f] to-[#f4d7a8] flex items-center justify-center shadow-md shadow-[#dfb26f]/20">
+            <Play className="w-4 h-4 text-stone-950 fill-current ml-0.5" />
           </div>
           <h1 className="text-[22px] font-extrabold tracking-tight text-white font-sans">
             Celeiro
@@ -84,11 +84,11 @@ export default function Sidebar({
                     onClick={() => handleNavClick(item.id)}
                     className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150 text-left cursor-pointer ${
                       isActive
-                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        ? 'bg-white/[0.08] text-[#dfb26f] font-semibold border border-white/[0.05]'
                         : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#fa2d48]' : 'text-stone-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#dfb26f]' : 'text-stone-400'}`} />
                     {item.label}
                   </button>
                 </li>
@@ -112,11 +112,11 @@ export default function Sidebar({
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
                       activeTab === 'library-favorites' && !selectedPlaylistId
-                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        ? 'bg-white/[0.08] text-[#dfb26f] font-semibold border border-white/[0.05]'
                         : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
                     }`}
                   >
-                    <Heart className={`w-4 h-4 ${activeTab === 'library-favorites' && !selectedPlaylistId ? 'text-[#fa2d48] fill-current' : 'text-stone-400'}`} />
+                    <Heart className={`w-4 h-4 ${activeTab === 'library-favorites' && !selectedPlaylistId ? 'text-[#dfb26f] fill-current' : 'text-stone-400'}`} />
                     Favoritos
                   </button>
                 </li>
@@ -129,11 +129,11 @@ export default function Sidebar({
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
                       activeTab === 'library-history' && !selectedPlaylistId
-                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        ? 'bg-white/[0.08] text-[#dfb26f] font-semibold border border-white/[0.05]'
                         : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
                     }`}
                   >
-                    <Clock className={`w-4 h-4 ${activeTab === 'library-history' && !selectedPlaylistId ? 'text-[#fa2d48]' : 'text-stone-400'}`} />
+                    <Clock className={`w-4 h-4 ${activeTab === 'library-history' && !selectedPlaylistId ? 'text-[#dfb26f]' : 'text-stone-400'}`} />
                     Histórico
                   </button>
                 </li>
@@ -145,7 +145,7 @@ export default function Sidebar({
                 <p className="text-[10px] font-extrabold text-stone-500 uppercase tracking-widest">Playlists</p>
                 <button
                   onClick={onCreatePlaylist}
-                  className="p-1 rounded-md hover:bg-white/10 text-[#fa2d48] transition-colors cursor-pointer"
+                  className="p-1 rounded-md hover:bg-white/10 text-[#dfb26f] transition-colors cursor-pointer"
                   title="Criar nova playlist"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -168,11 +168,11 @@ export default function Sidebar({
                           }}
                           className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
                             isSelected
-                              ? 'bg-[#fa2d48]/10 text-[#fa2d48] font-bold border border-[#fa2d48]/20'
+                              ? 'bg-[#dfb26f]/10 text-[#dfb26f] font-bold border border-[#dfb26f]/20'
                               : 'hover:bg-white/[0.03] text-stone-400 hover:text-white'
                           }`}
                         >
-                          <Music className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#fa2d48]' : 'text-stone-500'}`} />
+                          <Music className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#dfb26f]' : 'text-stone-500'}`} />
                           <span className="truncate flex-1">{pl.name}</span>
                         </button>
                       </li>
@@ -194,7 +194,7 @@ export default function Sidebar({
             rel="noreferrer"
             className="flex items-center gap-2.5 text-stone-400 hover:text-white font-medium text-[13px] mb-4 px-2 transition-colors cursor-pointer"
           >
-            <Play className="w-4 h-4 text-[#fa2d48]" />
+            <Play className="w-4 h-4 text-[#dfb26f]" />
             <span>Cenáculo Music</span>
             <ExternalLink className="w-3 h-3 text-stone-500" />
           </a>
@@ -219,7 +219,7 @@ export default function Sidebar({
               </div>
               <button 
                 onClick={onLogout}
-                className="text-stone-400 hover:text-[#fa2d48] shrink-0 transition-colors p-1.5 hover:bg-white/5 rounded-lg cursor-pointer"
+                className="text-stone-400 hover:text-[#dfb26f] shrink-0 transition-colors p-1.5 hover:bg-white/5 rounded-lg cursor-pointer"
                 title="Sair da sessão"
               >
                 <LogOut className="w-4 h-4" />
@@ -229,7 +229,7 @@ export default function Sidebar({
             <button
               id="sidebar-signin-btn"
               onClick={onLoginClick}
-              className="w-full bg-[#fa2d48] hover:bg-[#ff2d55] text-white font-bold text-sm py-3 rounded-full text-center transition-all shadow-lg shadow-[#fa2d48]/15 flex items-center justify-center gap-2 active:scale-[0.96] cursor-pointer"
+              className="w-full bg-[#dfb26f] hover:bg-[#cf9e58] text-stone-950 font-extrabold text-sm py-3 rounded-full text-center transition-all shadow-lg shadow-[#dfb26f]/15 flex items-center justify-center gap-2 active:scale-[0.96] cursor-pointer"
             >
               <User className="w-4 h-4 fill-current" />
               Iniciar sessão

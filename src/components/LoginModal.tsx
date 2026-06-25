@@ -174,8 +174,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
 
         {/* Brand Logo Header */}
         <div className="flex justify-center mt-4 mb-5">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#fa2d48] to-[#ff5268] flex items-center justify-center shadow-lg shadow-[#fa2d48]/20">
-            <Play className="w-8 h-8 text-white fill-current ml-1" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#dfb26f] to-[#f4d7a8] flex items-center justify-center shadow-lg shadow-[#dfb26f]/20">
+            <Play className="w-8 h-8 text-stone-950 fill-current ml-1" />
           </div>
         </div>
 
@@ -213,7 +213,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#fa2d48] transition-colors"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#dfb26f] transition-colors"
                   />
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#fa2d48] transition-colors"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#dfb26f] transition-colors"
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
               <div className="flex justify-between items-center mb-1.5">
                 <label className="block text-[10px] text-stone-500 font-bold uppercase tracking-wider">Senha</label>
                 {mode === 'signin' && (
-                  <span className="text-[10px] text-stone-500 hover:text-[#fa2d48] cursor-pointer transition-colors" onClick={() => alert('Para redefinir a senha, configure as variáveis de ambiente do Supabase no applet.')}>
+                  <span className="text-[10px] text-stone-500 hover:text-[#dfb26f] cursor-pointer transition-colors" onClick={() => alert('Para redefinir a senha, configure as variáveis de ambiente do Supabase no applet.')}>
                     Esqueceu a senha?
                   </span>
                 )}
@@ -252,7 +252,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#fa2d48] transition-colors"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#dfb26f] transition-colors"
                 />
               </div>
             </div>
@@ -275,7 +275,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
             {mode === 'signin' ? 'Não possui uma conta? ' : 'Já possui uma conta? '}
             <button 
               onClick={handleToggleMode}
-              className="text-[#fa2d48] font-bold hover:underline cursor-pointer"
+              className="text-[#dfb26f] font-bold hover:underline cursor-pointer"
             >
               {mode === 'signin' ? 'Cadastre-se' : 'Faça login'}
             </button>
@@ -285,10 +285,10 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
           {!isSupabaseConfigured && (
             <div className="mt-8 p-4 rounded-2xl bg-white/[0.03] border border-white/5 text-left">
               <div className="flex items-start gap-2.5 text-[#8e8e93] mb-3">
-                <Info className="w-4 h-4 text-[#fa2d48] shrink-0 mt-0.5" />
+                <Info className="w-4 h-4 text-[#dfb26f] shrink-0 mt-0.5" />
                 <div className="text-[11px] leading-relaxed">
                   <span className="font-bold text-white block">Ativo: Modo de Simulação Supabase</span>
-                  Insira as variáveis <code className="text-[#fa2d48] font-mono px-1 rounded bg-black/40">VITE_SUPABASE_URL</code> e <code className="text-[#fa2d48] font-mono px-1 rounded bg-black/40">VITE_SUPABASE_ANON_KEY</code> nas Configurações para conectar a sua base real do Supabase.
+                  Insira as variáveis <code className="text-[#dfb26f] font-mono px-1 rounded bg-black/40">VITE_SUPABASE_URL</code> e <code className="text-[#dfb26f] font-mono px-1 rounded bg-black/40">VITE_SUPABASE_ANON_KEY</code> nas Configurações para conectar a sua base real do Supabase.
                 </div>
               </div>
 
@@ -297,7 +297,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
                 className="w-full flex items-center justify-between text-[10px] text-stone-400 hover:text-white font-bold uppercase tracking-wider py-1"
               >
                 <span>{showDemoAccounts ? 'Ocultar' : 'Ver'} Contas de Demonstração</span>
-                <KeyRound className="w-3.5 h-3.5 text-[#fa2d48]" />
+                <KeyRound className="w-3.5 h-3.5 text-[#dfb26f]" />
               </button>
 
               {showDemoAccounts && (

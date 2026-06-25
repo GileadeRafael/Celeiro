@@ -109,7 +109,7 @@ export default function BottomPlayer({
           id="player-shuffle-toggle"
           onClick={onShuffleToggle}
           className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
-            isShuffle ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
+            isShuffle ? 'text-[#dfb26f]' : 'text-[#8e8e93] hover:text-white'
           }`}
           title="Ordem Aleatória"
         >
@@ -155,13 +155,13 @@ export default function BottomPlayer({
           id="player-repeat-toggle"
           onClick={onRepeatToggle}
           className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 relative ${
-            repeatMode !== 'none' ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
+            repeatMode !== 'none' ? 'text-[#dfb26f]' : 'text-[#8e8e93] hover:text-white'
           }`}
           title="Repetir"
         >
           <Repeat className="w-3.5 h-3.5 md:w-4 md:h-4" />
           {repeatMode === 'one' && (
-            <span className="absolute top-0 right-0 w-2 h-2 bg-[#fa2d48] text-black text-[5px] font-bold rounded-full flex items-center justify-center">
+            <span className="absolute top-0 right-0 w-2 h-2 bg-[#dfb26f] text-black text-[5px] font-bold rounded-full flex items-center justify-center">
               1
             </span>
           )}
@@ -210,9 +210,9 @@ export default function BottomPlayer({
               max={duration || 100}
               value={currentTime}
               onChange={(e) => onSeek(parseFloat(e.target.value))}
-              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+              className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
               style={{
-                background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
               }}
             />
           </div>
@@ -245,7 +245,7 @@ export default function BottomPlayer({
                 }}
                 className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold hover:bg-white/5 rounded-xl transition-all text-left"
               >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'text-[#fa2d48] fill-current' : 'text-[#8e8e93]'}`} />
+                <Heart className={`w-4 h-4 ${isFavorite ? 'text-[#dfb26f] fill-current' : 'text-[#8e8e93]'}`} />
                 <span>{isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}</span>
               </button>
 
@@ -286,7 +286,7 @@ export default function BottomPlayer({
           id="bottom-queue-toggle"
           onClick={onToggleQueueDrawer}
           className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
-            isQueueDrawerOpen ? 'text-[#fa2d48] bg-[#fa2d48]/10' : 'text-[#8e8e93] hover:text-white'
+            isQueueDrawerOpen ? 'text-[#dfb26f] bg-[#dfb26f]/10' : 'text-[#8e8e93] hover:text-white'
           }`}
           title="Seguintes"
         >
@@ -300,7 +300,7 @@ export default function BottomPlayer({
             className="p-1 rounded-full text-[#8e8e93] hover:text-white transition-colors"
           >
             {isMuted || volume === 0 ? (
-              <VolumeX className="w-4 h-4 md:w-4.5 md:h-4.5 text-rose-500" />
+              <VolumeX className="w-4 h-4 md:w-4.5 md:h-4.5 text-amber-500" />
             ) : (
               <Volume2 className="w-4 h-4 md:w-4.5 md:h-4.5" />
             )}
@@ -313,9 +313,9 @@ export default function BottomPlayer({
             step={0.01}
             value={isMuted ? 0 : volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="w-14 md:w-16 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+            className="w-14 md:w-16 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
             style={{
-              background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+              background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
             }}
           />
         </div>

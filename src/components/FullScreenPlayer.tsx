@@ -326,7 +326,7 @@ export default function FullScreenPlayer({
           <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
             <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
               <h3 className="text-lg font-black text-white flex items-center gap-2">
-                <Mic className="w-4.5 h-4.5 text-[#fa2d48]" /> Letra da Música
+                <Mic className="w-4.5 h-4.5 text-[#dfb26f]" /> Letra da Música
               </h3>
               <button onClick={() => setShowLyrics(false)} className="text-xs text-stone-400 hover:text-white font-bold transition-all">
                 Fechar
@@ -351,7 +351,7 @@ export default function FullScreenPlayer({
                       onClick={() => onSeek(line.time)}
                       className={`w-full text-left text-sm md:text-base font-bold tracking-tight transition-all duration-300 block cursor-pointer outline-none ${
                         isLineActive 
-                          ? 'text-[#fa2d48] scale-100 opacity-100 drop-shadow-[0_4px_12px_rgba(250,45,72,0.25)]' 
+                          ? 'text-[#dfb26f] scale-100 opacity-100 drop-shadow-[0_4px_12px_rgba(223,178,111,0.25)]' 
                           : 'text-stone-400/40 hover:text-stone-300'
                       }`}
                     >
@@ -369,7 +369,7 @@ export default function FullScreenPlayer({
           <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
             <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
               <h3 className="text-lg font-black text-white flex items-center gap-2">
-                <List className="w-4.5 h-4.5 text-[#fa2d48]" /> Seguintes
+                <List className="w-4.5 h-4.5 text-[#dfb26f]" /> Seguintes
               </h3>
               <button onClick={() => setShowQueue(false)} className="text-xs text-stone-400 hover:text-white font-bold transition-all">
                 Fechar
@@ -431,7 +431,7 @@ export default function FullScreenPlayer({
               id="immersive-shuffle-toggle"
               onClick={onShuffleToggle}
               className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
-                isShuffle ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
+                isShuffle ? 'text-[#dfb26f]' : 'text-[#8e8e93] hover:text-white'
               }`}
               title="Ordem Aleatória"
             >
@@ -477,13 +477,13 @@ export default function FullScreenPlayer({
               id="immersive-repeat-toggle"
               onClick={onRepeatToggle}
               className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 relative ${
-                repeatMode !== 'none' ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
+                repeatMode !== 'none' ? 'text-[#dfb26f]' : 'text-[#8e8e93] hover:text-white'
               }`}
               title="Repetir"
             >
               <Repeat className="w-3.5 h-3.5 md:w-4 md:h-4" />
               {repeatMode === 'one' && (
-                <span className="absolute top-0 right-0 w-2 h-2 bg-[#fa2d48] text-black text-[5px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-0 right-0 w-2 h-2 bg-[#dfb26f] text-black text-[5px] font-bold rounded-full flex items-center justify-center">
                   1
                 </span>
               )}
@@ -528,9 +528,9 @@ export default function FullScreenPlayer({
                   max={duration || 100}
                   value={currentTime}
                   onChange={(e) => onSeek(parseFloat(e.target.value))}
-                  className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+                  className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                   style={{
-                    background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                    background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                   }}
                 />
               </div>
@@ -563,7 +563,7 @@ export default function FullScreenPlayer({
                     }}
                     className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold hover:bg-white/5 rounded-xl transition-all text-left"
                   >
-                    <Heart className={`w-4 h-4 ${isFavorite ? 'text-[#fa2d48] fill-current' : 'text-[#8e8e93]'}`} />
+                    <Heart className={`w-4 h-4 ${isFavorite ? 'text-[#dfb26f] fill-current' : 'text-[#8e8e93]'}`} />
                     <span>{isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}</span>
                   </button>
 
@@ -608,7 +608,7 @@ export default function FullScreenPlayer({
                 setShowQueue(false);
               }}
               className={`p-1.5 rounded-full transition-all active:scale-95 ${
-                showLyrics ? 'text-[#fa2d48] bg-[#fa2d48]/10' : 'text-[#8e8e93] hover:text-white'
+                showLyrics ? 'text-[#dfb26f] bg-[#dfb26f]/10' : 'text-[#8e8e93] hover:text-white'
               }`}
               title="Letra"
             >
@@ -623,7 +623,7 @@ export default function FullScreenPlayer({
                 setShowLyrics(false);
               }}
               className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
-                showQueue ? 'text-[#fa2d48] bg-[#fa2d48]/10' : 'text-[#8e8e93] hover:text-white'
+                showQueue ? 'text-[#dfb26f] bg-[#dfb26f]/10' : 'text-[#8e8e93] hover:text-white'
               }`}
               title="Seguintes"
             >
@@ -650,9 +650,9 @@ export default function FullScreenPlayer({
                 step={0.01}
                 value={isMuted ? 0 : volume}
                 onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-                className="w-14 md:w-16 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+                className="w-14 md:w-16 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                 style={{
-                  background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                 }}
               />
             </div>

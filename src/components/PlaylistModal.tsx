@@ -8,7 +8,7 @@ interface PlaylistModalProps {
 }
 
 // Beautiful vector-based default 16:9 cover image showing a stylized serif "C" for Celeiro
-const DEFAULT_C_COVER = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fa2d48" /><stop offset="50%" stop-color="%232c1015" /><stop offset="100%" stop-color="%23121214" /></linearGradient></defs><rect width="100%" height="100%" fill="url(%23g)" /><circle cx="400" cy="225" r="90" fill="%23121214" fill-opacity="0.6" stroke="%23fa2d48" stroke-opacity="0.3" stroke-width="2" /><text x="50%" y="54%" font-family="'Times New Roman', Georgia, serif" font-weight="900" font-size="130" fill="%23ffffff" text-anchor="middle" dominant-baseline="middle">C</text><text x="50%" y="82%" font-family="'Courier New', monospace" font-weight="bold" font-size="14" fill="%23fa2d48" letter-spacing="6" text-anchor="middle" opacity="0.9">CELEIRO WORSHIP</text></svg>`;
+const DEFAULT_C_COVER = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23dfb26f" /><stop offset="50%" stop-color="%232c2110" /><stop offset="100%" stop-color="%23121214" /></linearGradient></defs><rect width="100%" height="100%" fill="url(%23g)" /><circle cx="400" cy="225" r="90" fill="%23121214" fill-opacity="0.6" stroke="%23dfb26f" stroke-opacity="0.3" stroke-width="2" /><text x="50%" y="54%" font-family="'Times New Roman', Georgia, serif" font-weight="900" font-size="130" fill="%23ffffff" text-anchor="middle" dominant-baseline="middle">C</text><text x="50%" y="82%" font-family="'Courier New', monospace" font-weight="bold" font-size="14" fill="%23dfb26f" letter-spacing="6" text-anchor="middle" opacity="0.9">CELEIRO WORSHIP</text></svg>`;
 
 const PRESET_COVERS = [
   { id: '1', name: 'Adoração Profunda', url: 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=600&q=80' },
@@ -75,7 +75,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
         {/* Left Side: 16:9 Dynamic Preview Frame */}
         <div className="w-full md:w-[42%] bg-[#121214] border-b md:border-b-0 md:border-r border-white/5 p-6 flex flex-col justify-between relative overflow-hidden">
           
-          <div className="absolute inset-0 bg-gradient-to-b from-[#fa2d48]/5 via-transparent to-black/40 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#dfb26f]/5 via-transparent to-black/40 pointer-events-none" />
 
           <div className="relative z-10 text-left">
             <h4 className="text-sm font-black text-white">Capa da sua Playlist</h4>
@@ -92,7 +92,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
             
             {/* Dark vinyl text overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4 flex flex-col justify-end text-left">
-              <span className="text-[9px] font-extrabold text-[#fa2d48] uppercase tracking-widest">
+              <span className="text-[9px] font-extrabold text-[#dfb26f] uppercase tracking-widest">
                 Celeiro Worship
               </span>
               <h3 className="text-sm font-black text-white truncate drop-shadow-md">
@@ -128,7 +128,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
             {/* Title / Description Header */}
             <div>
               <h3 className="text-lg font-black tracking-tight flex items-center gap-2 text-white">
-                <FolderPlus className="w-5 h-5 text-[#fa2d48]" />
+                <FolderPlus className="w-5 h-5 text-[#dfb26f]" />
                 Criar Nova Playlist
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">Inicie uma nova lista de reprodução com os louvores que tocam seu coração.</p>
@@ -150,7 +150,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex: Louvores de Domingo"
                     maxLength={40}
-                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#dfb26f] focus:ring-1 focus:ring-[#dfb26f] transition-all"
                   />
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Ex: Seleção especial com canções para oração e intimidade."
                     maxLength={100}
-                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#dfb26f] focus:ring-1 focus:ring-[#dfb26f] transition-all"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                       }}
                       className={`relative aspect-[16/9] rounded-lg overflow-hidden border transition-all cursor-pointer group ${
                         selectedPreset === preset.id
-                          ? 'border-[#fa2d48] ring-2 ring-[#fa2d48]/50'
+                          ? 'border-[#dfb26f] ring-2 ring-[#dfb26f]/50'
                           : 'border-white/5 hover:border-white/20'
                       }`}
                     >
@@ -224,9 +224,9 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     />
                     <label
                       htmlFor="playlist-cover-upload"
-                      className="flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-[#fa2d48]/50 bg-[#121214] hover:bg-[#121214]/80 rounded-xl py-3 px-4 text-center cursor-pointer transition-all group"
+                      className="flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-[#dfb26f]/50 bg-[#121214] hover:bg-[#121214]/80 rounded-xl py-3 px-4 text-center cursor-pointer transition-all group"
                     >
-                      <ImageIcon className="w-5 h-5 text-stone-500 group-hover:text-[#fa2d48] mb-1 transition-colors" />
+                      <ImageIcon className="w-5 h-5 text-stone-500 group-hover:text-[#dfb26f] mb-1 transition-colors" />
                       {uploadedCover ? (
                         <div className="space-y-0.5">
                           <span className="text-[11px] font-bold text-emerald-400 block">✓ Imagem carregada com sucesso</span>
@@ -253,8 +253,8 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                 </div>
 
                 {!selectedPreset && !uploadedCover && (
-                  <p className="text-[9px] text-[#fa2d48] mt-1.5 font-semibold flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-[#fa2d48] animate-pulse" />
+                  <p className="text-[9px] text-[#dfb26f] mt-1.5 font-semibold flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-[#dfb26f] animate-pulse" />
                     Capa padrão com um "C" será definida automaticamente.
                   </p>
                 )}
@@ -272,7 +272,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                 <button
                   type="submit"
                   disabled={!name.trim()}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-[#fa2d48] hover:bg-[#ff2d55] text-white flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#fa2d48]/15 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-[#dfb26f] hover:bg-[#cf9e58] text-white flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#dfb26f]/15 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Criar Playlist
