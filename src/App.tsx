@@ -1723,6 +1723,12 @@ export default function App() {
           isDownloaded={downloaded.includes(currentTrack.id)}
           onToggleDownload={() => handleToggleDownload(currentTrack.id)}
           synthActive={synthActive}
+          customPlaylists={customPlaylists}
+          onAddToPlaylist={handleAddToPlaylist}
+          trackList={TRACK_LIST}
+          queue={queue}
+          playbackHistory={playbackHistory}
+          onSelectTrack={(trackId: string) => handlePlayTrack(trackId)}
         />
       )}
 

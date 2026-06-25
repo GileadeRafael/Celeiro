@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   X, 
   Play, 
@@ -10,12 +10,14 @@ import {
   Volume2, 
   VolumeX, 
   Heart, 
-  Star,
-  Download,
-  CheckCircle,
-  Sparkles
+  List,
+  Sparkles,
+  Mic,
+  MoreHorizontal,
+  Music,
+  Plus
 } from 'lucide-react';
-import { Track } from '../types';
+import { Track, Playlist } from '../types';
 
 interface FullScreenPlayerProps {
   track: Track | null;
@@ -40,6 +42,14 @@ interface FullScreenPlayerProps {
   isDownloaded: boolean;
   onToggleDownload: () => void;
   synthActive?: boolean;
+  customPlaylists?: Playlist[];
+  onAddToPlaylist?: (playlistId: string, trackId: string) => void;
+  
+  // Carousel flow props
+  trackList: Track[];
+  queue: string[];
+  playbackHistory: string[];
+  onSelectTrack: (trackId: string) => void;
 }
 
 export default function FullScreenPlayer({
@@ -64,16 +74,28 @@ export default function FullScreenPlayer({
   onToggleFavorite,
   isDownloaded,
   onToggleDownload,
-  synthActive = false
+  synthActive = false,
+  customPlaylists = [],
+  onAddToPlaylist,
+  
+  trackList = [],
+  queue = [],
+  playbackHistory = [],
+  onSelectTrack
 }: FullScreenPlayerProps) {
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
   const activeLineRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [showLyrics, setShowLyrics] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   if (!track) return null;
 
   // Format seconds to mm:ss
   const formatTime = (secs: number) => {
-    if (isNaN(secs)) return '0:00';
+    if (isNaN(secs) || secs === undefined) return '0:00';
     const mins = Math.floor(secs / 60);
     const remain = Math.floor(secs % 60);
     return `${mins}:${remain < 10 ? '0' : ''}${remain}`;
@@ -95,269 +117,550 @@ export default function FullScreenPlayer({
         block: 'center'
       });
     }
-  }, [currentLineIndex]);
+  }, [currentLineIndex, showLyrics]);
 
-  // Map tracks to custom immersive gradient sets
-  const getGradientClass = (trackId: string) => {
-    const gradients: Record<string, string> = {
-      'track-1': 'from-rose-950 via-[#3B0764]/80 to-stone-950',
-      'track-2': 'from-amber-950 via-stone-900 to-stone-950',
-      'track-3': 'from-[#450A0A]/90 via-stone-900 to-stone-950',
-      'track-4': 'from-yellow-950/80 via-amber-950 to-stone-950',
-      'track-5': 'from-emerald-950/90 via-yellow-950/20 to-stone-950',
-      'track-6': 'from-orange-950/80 via-[#2E1065]/60 to-stone-950',
-      'track-7': 'from-amber-900/40 via-stone-900 to-stone-950',
-      'track-8': 'from-fuchsia-950/80 via-[#1E1B4B]/80 to-stone-950',
-      'track-9': 'from-cyan-950/70 via-indigo-950 to-stone-950',
-      'track-10': 'from-[#14532D]/70 via-amber-950/50 to-stone-950',
-      'track-11': 'from-pink-950/50 via-indigo-950/60 to-stone-950',
-      'track-12': 'from-[#7C2D12]/70 via-slate-900 to-stone-950',
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-    return gradients[trackId] || 'from-stone-900 via-stone-950 to-black';
+  }, []);
+
+  // Construct previous and next tracks for Cover Flow
+  const getCurrentCarouselTracks = () => {
+    const currentIndex = trackList.findIndex(t => t.id === track.id);
+    
+    // Previous 2 songs
+    let prev1: Track | null = null;
+    let prev2: Track | null = null;
+    
+    if (playbackHistory.length > 1) {
+      const p1Id = playbackHistory[1];
+      prev1 = trackList.find(t => t.id === p1Id) || null;
+    }
+    if (playbackHistory.length > 2) {
+      const p2Id = playbackHistory[2];
+      prev2 = trackList.find(t => t.id === p2Id) || null;
+    }
+    
+    // Fallback to trackList indices if not found in history
+    if (!prev1 && currentIndex > 0) {
+      prev1 = trackList[currentIndex - 1];
+    }
+    if (!prev2 && currentIndex > 1) {
+      prev2 = trackList[currentIndex - 2];
+    } else if (!prev2 && prev1) {
+      const pIndex = trackList.indexOf(prev1);
+      if (pIndex > 0) prev2 = trackList[pIndex - 1];
+    }
+
+    // Next 2 songs
+    let next1: Track | null = null;
+    let next2: Track | null = null;
+    
+    if (queue.length > 0) {
+      const n1Id = queue[0];
+      next1 = trackList.find(t => t.id === n1Id) || null;
+    }
+    if (queue.length > 1) {
+      const n2Id = queue[1];
+      next2 = trackList.find(t => t.id === n2Id) || null;
+    }
+    
+    // Fallback to trackList indices if not found in queue
+    if (!next1 && currentIndex < trackList.length - 1) {
+      next1 = trackList[currentIndex + 1];
+    }
+    if (!next2 && currentIndex < trackList.length - 2) {
+      next2 = trackList[currentIndex + 2];
+    } else if (!next2 && next1) {
+      const nIndex = trackList.indexOf(next1);
+      if (nIndex < trackList.length - 1) next2 = trackList[nIndex + 1];
+    }
+
+    return { prev2, prev1, current: track, next1, next2 };
   };
+
+  const { prev2, prev1, current, next1, next2 } = getCurrentCarouselTracks();
 
   return (
     <div 
       id="immersive-player-overlay" 
-      className={`fixed inset-0 z-50 overflow-hidden flex flex-col bg-gradient-to-b ${getGradientClass(track.id)} text-white transition-all duration-700`}
+      className="fixed inset-0 z-50 overflow-hidden flex flex-col bg-[#121214] text-white transition-all duration-500 font-sans select-none"
     >
-      {/* Absolute Blurred Shifting Background Backdrop */}
-      <div className="absolute inset-0 bg-black/10 backdrop-blur-[60px] pointer-events-none z-0" />
-
-      {/* Top Header Row */}
-      <header className="relative z-10 flex items-center justify-between p-6 md:px-12 border-b border-white/5">
+      
+      {/* Top Header Row (Just close button) */}
+      <header className="relative z-10 flex items-center justify-between p-6 md:px-12 shrink-0">
         <button
           id="close-immersive-btn"
           onClick={onClose}
-          className="p-2 rounded-full bg-white/5 hover:bg-white/15 transition-all text-stone-300 hover:text-white"
+          className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 transition-all text-stone-300 hover:text-white"
           title="Fechar"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <span className="text-[10px] font-mono tracking-widest text-brand bg-brand/10 border border-brand/20 px-3 py-1 rounded-full uppercase font-bold flex items-center gap-1.5 shadow-sm">
-          <Sparkles className="w-3 h-3 text-brand animate-pulse" />
-          ESTÚDIO ACÚSTICO CELEIRO
-        </span>
-
-        <div className="w-9" /> {/* spacer */}
+        <div className="w-10" /> {/* spacer */}
       </header>
 
-      {/* Immersive Splitted View Container */}
-      <div className="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center p-6 md:px-16 gap-8 md:gap-16 overflow-hidden max-w-7xl mx-auto w-full">
+      {/* Main Body View Layout */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative overflow-hidden">
         
-        {/* Left Side: Stunning Large Artwork Plate */}
-        <div className="w-full md:w-1/2 max-w-md flex flex-col items-center justify-center text-center">
-          <div className="relative aspect-square w-[70vw] md:w-full max-w-[340px] md:max-w-md rounded-2xl overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] border border-white/10 group">
-            <img 
-              src={track.coverUrl} 
-              alt={track.title} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-
-          <div className="mt-8 w-full flex items-center justify-between px-2">
-            <div className="text-left min-w-0 flex-1">
-              <h2 className="text-xl md:text-3xl font-bold tracking-tight truncate text-white">
-                {track.title}
-              </h2>
-              <p className="text-sm md:text-lg text-stone-300 truncate mt-1.5 font-medium">
-                {track.artist}
-              </p>
-              <p className="text-xs text-stone-400/80 truncate mt-1">
-                {track.album}
-              </p>
+        {/* 3D Cover Flow Carousel Container */}
+        <div className="flex items-center justify-center gap-4 md:gap-8 my-4 md:my-8 h-60 md:h-80 relative w-full max-w-5xl overflow-hidden [perspective:1200px] select-none">
+          {/* prev2 */}
+          {prev2 && (
+            <div 
+              onClick={() => onSelectTrack(prev2.id)}
+              className="absolute left-[-10%] md:left-[5%] opacity-20 scale-50 md:scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
+              style={{
+                transform: 'rotateY(35deg) translateZ(-120px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <img 
+                src={prev2.coverUrl} 
+                alt={prev2.title} 
+                className="w-32 h-32 md:w-48 md:h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
+                referrerPolicy="no-referrer"
+              />
             </div>
+          )}
 
-            <div className="flex items-center gap-2 ml-4">
-              {/* Star/Favorite Star Button */}
-              <button
-                onClick={onToggleFavorite}
-                className={`p-2 rounded-full transition-all border ${
-                  isFavorite 
-                    ? 'bg-brand/20 border-brand text-brand' 
-                    : 'bg-white/5 border-white/10 text-stone-400 hover:text-white'
-                }`}
-                title="Favoritar canção"
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
-
-              {/* Download Option */}
-              <button
-                onClick={onToggleDownload}
-                className={`p-2 rounded-full transition-all border ${
-                  isDownloaded 
-                    ? 'bg-brand/20 border-brand text-brand' 
-                    : 'bg-white/5 border-white/10 text-stone-400 hover:text-white'
-                }`}
-                title="Status Offline"
-              >
-                {isDownloaded ? (
-                  <CheckCircle className="w-5 h-5" />
-                ) : (
-                  <Download className="w-5 h-5" />
-                )}
-              </button>
+          {/* prev1 */}
+          {prev1 && (
+            <div 
+              onClick={() => onSelectTrack(prev1.id)}
+              className="absolute left-[8%] md:left-[18%] opacity-60 scale-75 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-80 z-20 shrink-0"
+              style={{
+                transform: 'rotateY(25deg) translateZ(-60px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <img 
+                src={prev1.coverUrl} 
+                alt={prev1.title} 
+                className="w-36 h-36 md:w-56 md:h-56 rounded-[24px] object-cover shadow-[0_20px_50px_rgba(0,0,0,0.7)] border border-white/10"
+                referrerPolicy="no-referrer"
+              />
             </div>
-          </div>
+          )}
 
-          {track.lyricsWriter && (
-            <div className="text-left w-full mt-4 px-2 hidden md:block">
-              <p className="text-[10px] text-stone-500 uppercase tracking-wider font-mono">{track.lyricsWriter}</p>
+          {/* current */}
+          {current && (
+            <div 
+              className="relative scale-100 z-30 shrink-0 transition-all duration-500"
+              style={{
+                transform: 'rotateY(0deg) translateZ(60px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <img 
+                src={current.coverUrl} 
+                alt={current.title} 
+                className="w-48 h-48 md:w-72 md:h-72 rounded-[32px] object-cover shadow-[0_30px_70px_rgba(0,0,0,0.9)] border border-white/20"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
+
+          {/* next1 */}
+          {next1 && (
+            <div 
+              onClick={() => onSelectTrack(next1.id)}
+              className="absolute right-[8%] md:right-[18%] opacity-60 scale-75 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-80 z-20 shrink-0"
+              style={{
+                transform: 'rotateY(-25deg) translateZ(-60px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <img 
+                src={next1.coverUrl} 
+                alt={next1.title} 
+                className="w-36 h-36 md:w-56 md:h-56 rounded-[24px] object-cover shadow-[0_20px_50px_rgba(0,0,0,0.7)] border border-white/10"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
+
+          {/* next2 */}
+          {next2 && (
+            <div 
+              onClick={() => onSelectTrack(next2.id)}
+              className="absolute right-[-10%] md:right-[5%] opacity-20 scale-50 md:scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
+              style={{
+                transform: 'rotateY(-35deg) translateZ(-120px)',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <img 
+                src={next2.coverUrl} 
+                alt={next2.title} 
+                className="w-32 h-32 md:w-48 md:h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
+                referrerPolicy="no-referrer"
+              />
             </div>
           )}
         </div>
 
-        {/* Right Side: Karaoke Interactive Scrolling Lyrics Engine */}
-        <div 
-          className="w-full md:w-1/2 h-[35vh] md:h-[65vh] flex flex-col justify-center overflow-hidden relative"
-        >
-          {/* Top/Bottom Fade Gradients */}
-          <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#120E0B]/0 via-[#120E0B]/0 to-transparent pointer-events-none z-10" />
-          
-          <div 
-            ref={lyricsContainerRef}
-            className="flex-1 overflow-y-auto pr-4 space-y-6 md:space-y-8 scroll-smooth select-none custom-scrollbar pb-24 pt-24"
-          >
-            {track.lyrics.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-stone-500 text-sm">
-                Nenhuma letra disponível para esta faixa
-              </div>
-            ) : (
-              track.lyrics.map((line, index) => {
-                const isLineActive = index === currentLineIndex;
-                const isLinePast = index < currentLineIndex;
-
-                return (
-                  <button
-                    key={index}
-                    ref={isLineActive ? activeLineRef : null}
-                    onClick={() => onSeek(line.time)}
-                    className={`w-full text-left text-lg md:text-3xl font-bold tracking-tight transition-all duration-500 focus:outline-none block cursor-pointer outline-none hover:scale-[1.02] transform origin-left ${
-                      isLineActive 
-                        ? 'text-white scale-100 opacity-100 drop-shadow-[0_4px_12px_rgba(255,255,255,0.15)] filter-none' 
-                        : isLinePast
-                        ? 'text-stone-400/40 scale-95 opacity-55 hover:text-stone-300'
-                        : 'text-stone-400/40 scale-95 opacity-55 hover:text-stone-300'
-                    }`}
-                  >
-                    {line.text}
-                  </button>
-                );
-              })
-            )}
+        {/* Dynamic centered Song Name and Artist Pill */}
+        <div className="flex justify-center my-4 animate-fade-in shrink-0">
+          <div className="bg-white/[0.06] border border-white/10 px-8 py-3.5 rounded-full text-center inline-flex flex-col items-center justify-center backdrop-blur-md shadow-lg min-w-[240px] max-w-md">
+            <span className="text-base md:text-lg font-black text-white leading-tight truncate w-full px-2">
+              {current.title}
+            </span>
+            <span className="text-xs md:text-sm text-[#8e8e93] font-semibold mt-1 truncate w-full px-2">
+              {current.artist}
+            </span>
           </div>
         </div>
 
+        {/* Slidable Karaoke Lyrics Pane */}
+        {showLyrics && (
+          <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <Mic className="w-4.5 h-4.5 text-[#fa2d48]" /> Letra da Música
+              </h3>
+              <button onClick={() => setShowLyrics(false)} className="text-xs text-stone-400 hover:text-white font-bold transition-all">
+                Fechar
+              </button>
+            </div>
+            <div 
+              ref={lyricsContainerRef}
+              className="flex-1 overflow-y-auto pr-2 space-y-5 scroll-smooth select-none custom-scrollbar pb-10"
+            >
+              {current.lyrics.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-stone-500 text-sm italic">
+                  Nenhuma letra disponível para esta música.
+                </div>
+              ) : (
+                current.lyrics.map((line, index) => {
+                  const isLineActive = index === currentLineIndex;
+
+                  return (
+                    <button
+                      key={index}
+                      ref={isLineActive ? activeLineRef : null}
+                      onClick={() => onSeek(line.time)}
+                      className={`w-full text-left text-sm md:text-base font-bold tracking-tight transition-all duration-300 block cursor-pointer outline-none ${
+                        isLineActive 
+                          ? 'text-[#fa2d48] scale-100 opacity-100 drop-shadow-[0_4px_12px_rgba(250,45,72,0.25)]' 
+                          : 'text-stone-400/40 hover:text-stone-300'
+                      }`}
+                    >
+                      {line.text}
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Slidable Queue Pane */}
+        {showQueue && (
+          <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <List className="w-4.5 h-4.5 text-[#fa2d48]" /> Seguintes
+              </h3>
+              <button onClick={() => setShowQueue(false)} className="text-xs text-stone-400 hover:text-white font-bold transition-all">
+                Fechar
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar pb-10">
+              {(() => {
+                const upcoming = queue.length > 0 
+                  ? queue.map(id => trackList.find(t => t.id === id)).filter((t): t is Track => !!t)
+                  : trackList.filter(t => t.id !== current.id);
+
+                if (upcoming.length === 0) {
+                  return (
+                    <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl text-stone-500 text-xs">
+                      Nenhuma música a seguir.
+                    </div>
+                  );
+                }
+
+                return upcoming.map((trackItem, idx) => {
+                  return (
+                    <div 
+                      key={`${trackItem.id}-${idx}`}
+                      onClick={() => {
+                        onSelectTrack(trackItem.id);
+                        setShowQueue(false);
+                      }}
+                      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/[0.04] group transition-all cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <img src={trackItem.coverUrl} className="w-10 h-10 rounded-lg object-cover border border-white/5" />
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-xs font-bold text-stone-200 truncate group-hover:text-white transition-colors">{trackItem.title}</span>
+                          <span className="block text-[10px] text-[#8e8e93] truncate mt-0.5">{trackItem.artist}</span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#8e8e93] pl-2">{formatTime(trackItem.duration)}</span>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+
       </div>
 
-      {/* Footer Controls & Scrubber */}
-      <footer className="relative z-10 bg-black/40 backdrop-blur-md p-6 md:px-12 border-t border-white/5">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6 justify-between">
+      {/* Identical Floating Bottom Media Player bar */}
+      <footer className="p-6 md:p-10 shrink-0 w-full flex justify-center z-10">
+        <div 
+          id="immersive-floating-player" 
+          className="w-[95%] md:w-[85%] max-w-4xl rounded-full bg-[#1c1c1e]/90 border border-white/10 px-6 py-3.5 shadow-[0_15px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-4 md:gap-6 select-none backdrop-blur-xl"
+        >
           
-          {/* Mobile progress display */}
-          <div className="w-full md:w-1/3 flex items-center gap-3">
-            <span className="text-[10px] font-mono text-stone-400">{formatTime(currentTime)}</span>
-            <input
-              id="immersive-slider"
-              type="range"
-              min={0}
-              max={duration || 100}
-              value={currentTime}
-              onChange={(e) => onSeek(parseFloat(e.target.value))}
-              className="flex-1 h-[3px] bg-white/10 rounded-full appearance-none cursor-pointer accent-brand focus:outline-none"
-              style={{
-                background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
-              }}
-            />
-            <span className="text-[10px] font-mono text-stone-400">-{formatTime(Math.max(0, duration - currentTime))}</span>
-          </div>
-
-          {/* Primary Controls */}
-          <div className="flex items-center gap-6">
+          {/* 1. LEFT CONTROLS SECTION */}
+          <div className="flex items-center gap-2.5 md:gap-3 text-stone-400 shrink-0">
             {/* Shuffle */}
             <button
+              id="immersive-shuffle-toggle"
               onClick={onShuffleToggle}
-              className={`p-2 rounded-full transition-colors ${
-                isShuffle ? 'text-brand bg-white/5' : 'text-stone-400 hover:text-white'
+              className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
+                isShuffle ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
               }`}
+              title="Ordem Aleatória"
             >
-              <Shuffle className="w-5 h-5" />
+              <Shuffle className="w-3.5 h-3.5 md:w-4 md:h-4" />
             </button>
 
-            {/* Prev */}
+            {/* Previous */}
             <button
+              id="immersive-skip-back"
               onClick={onPrevious}
-              className="p-2 rounded-full text-stone-300 hover:text-white transition-transform active:scale-90"
+              className="p-1.5 rounded-full text-[#8e8e93] hover:text-white hover:bg-white/5 transition-all active:scale-95"
+              title="Anterior"
             >
-              <SkipBack className="w-6 h-6 fill-current" />
+              <SkipBack className="w-4 h-4 md:w-4.5 md:h-4.5 fill-current" />
             </button>
 
-            {/* Play/Pause */}
+            {/* Play / Pause */}
             <button
+              id="immersive-play-pause"
               onClick={onPlayPause}
-              className="w-14 h-14 rounded-full bg-white text-stone-950 flex items-center justify-center shadow-2xl hover:scale-105 active:scale-90 transition-all"
+              className="p-1.5 rounded-full text-white hover:bg-white/5 transition-all active:scale-95"
+              title={isPlaying ? 'Pausar' : 'Tocar'}
             >
               {isPlaying ? (
-                <Pause className="w-6 h-6 fill-current text-stone-950" />
+                <Pause className="w-5 h-5 md:w-5.5 md:h-5.5 fill-current" />
               ) : (
-                <Play className="w-6 h-6 fill-current text-stone-950 ml-1" />
+                <Play className="w-5 h-5 md:w-5.5 md:h-5.5 fill-current ml-0.5" />
               )}
             </button>
 
             {/* Next */}
             <button
+              id="immersive-skip-forward"
               onClick={onNext}
-              className="p-2 rounded-full text-stone-300 hover:text-white transition-transform active:scale-90"
+              className="p-1.5 rounded-full text-[#8e8e93] hover:text-white hover:bg-white/5 transition-all active:scale-95"
+              title="Próxima"
             >
-              <SkipForward className="w-6 h-6 fill-current" />
+              <SkipForward className="w-4 h-4 md:w-4.5 md:h-4.5 fill-current" />
             </button>
 
             {/* Repeat */}
             <button
+              id="immersive-repeat-toggle"
               onClick={onRepeatToggle}
-              className={`p-2 rounded-full transition-colors relative ${
-                repeatMode !== 'none' ? 'text-brand bg-white/5' : 'text-stone-400 hover:text-white'
+              className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 relative ${
+                repeatMode !== 'none' ? 'text-[#fa2d48]' : 'text-[#8e8e93] hover:text-white'
               }`}
+              title="Repetir"
             >
-              <Repeat className="w-5 h-5" />
+              <Repeat className="w-3.5 h-3.5 md:w-4 md:h-4" />
               {repeatMode === 'one' && (
-                <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-brand text-stone-950 text-[8px] font-bold rounded-full flex items-center justify-center">1</span>
+                <span className="absolute top-0 right-0 w-2 h-2 bg-[#fa2d48] text-black text-[5px] font-bold rounded-full flex items-center justify-center">
+                  1
+                </span>
               )}
             </button>
           </div>
 
-          {/* Immersive volume panel */}
-          <div className="hidden md:flex items-center gap-3 w-1/3 justify-end">
-            <button
-              onClick={onMuteToggle}
-              className="text-stone-400 hover:text-white transition-colors"
-            >
-              {isMuted || volume === 0 ? (
-                <VolumeX className="w-5 h-5 text-rose-500" />
-              ) : (
-                <Volume2 className="w-5 h-5" />
+          {/* 2. MIDDLE METADATA & SEEKER SECTION */}
+          <div className="flex-1 flex items-center gap-3 min-w-0">
+            {/* Cover thumbnail */}
+            <div className="w-10 h-10 md:w-11 md:h-11 rounded-lg overflow-hidden shrink-0 border border-white/5 shadow-md">
+              <img 
+                src={current.coverUrl} 
+                alt={current.title} 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+
+            {/* Text information + Seeker line */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+              <div className="flex items-baseline justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <span className="block text-xs md:text-sm font-bold text-white truncate leading-tight">
+                    {current.title}
+                  </span>
+                  <span className="block text-[10px] md:text-xs text-[#8e8e93] truncate leading-tight">
+                    {current.artist}
+                  </span>
+                </div>
+
+                <span className="text-[10px] md:text-xs font-mono font-bold text-stone-400 shrink-0 select-none">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
+              </div>
+
+              {/* Scrubber track line */}
+              <div className="flex items-center w-full">
+                <input
+                  id="immersive-player-scrubber"
+                  type="range"
+                  min={0}
+                  max={duration || 100}
+                  value={currentTime}
+                  onChange={(e) => onSeek(parseFloat(e.target.value))}
+                  className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+                  style={{
+                    background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 3. RIGHT ACTIONS & VOLUME SECTION */}
+          <div className="flex items-center gap-2.5 md:gap-3 shrink-0 relative">
+            {/* Three dots option */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                id="immersive-options-button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
+                  isDropdownOpen ? 'text-white bg-white/5' : 'text-[#8e8e93] hover:text-white'
+                }`}
+                title="Mais opções"
+              >
+                <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+
+              {/* Mini Popup/Dropdown inside the player */}
+              {isDropdownOpen && (
+                <div className="absolute bottom-14 right-0 w-56 bg-[#1c1c1e] border border-white/10 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.9)] z-50 py-2.5 px-1 animate-fade-in text-stone-200">
+                  {/* Favorites action */}
+                  <button
+                    onClick={() => {
+                      onToggleFavorite();
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold hover:bg-white/5 rounded-xl transition-all text-left"
+                  >
+                    <Heart className={`w-4 h-4 ${isFavorite ? 'text-[#fa2d48] fill-current' : 'text-[#8e8e93]'}`} />
+                    <span>{isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}</span>
+                  </button>
+
+                  <div className="my-1.5 border-t border-white/5" />
+
+                  {/* Add to Playlist section */}
+                  <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-stone-500 tracking-wider">
+                    Adicionar à Playlist
+                  </div>
+
+                  <div className="max-h-36 overflow-y-auto custom-scrollbar px-1 space-y-0.5">
+                    {!customPlaylists || customPlaylists.length === 0 ? (
+                      <div className="px-2 py-2 text-[11px] text-[#8e8e93] italic">
+                        Nenhuma playlist criada.
+                      </div>
+                    ) : (
+                      customPlaylists.map(playlist => (
+                        <button
+                          key={playlist.id}
+                          onClick={() => {
+                            if (onAddToPlaylist) {
+                              onAddToPlaylist(playlist.id, current.id);
+                            }
+                            setIsDropdownOpen(false);
+                          }}
+                          className="w-full flex items-center gap-2.5 px-2 py-1.5 text-xs font-medium hover:bg-white/5 rounded-lg transition-all text-left truncate"
+                        >
+                          <Music className="w-3.5 h-3.5 text-[#8e8e93] shrink-0" />
+                          <span className="truncate">{playlist.name}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
               )}
-            </button>
-            <input
-              id="immersive-volume-slider"
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={isMuted ? 0 : volume}
-              onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-              className="w-24 h-[3px] bg-white/10 rounded-full appearance-none cursor-pointer accent-brand focus:outline-none"
-              style={{
-                background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+            </div>
+
+            {/* Show Lyrics Microphone Button */}
+            <button
+              onClick={() => {
+                setShowLyrics(!showLyrics);
+                setShowQueue(false);
               }}
-            />
+              className={`p-1.5 rounded-full transition-all active:scale-95 ${
+                showLyrics ? 'text-[#fa2d48] bg-[#fa2d48]/10' : 'text-[#8e8e93] hover:text-white'
+              }`}
+              title="Letra"
+            >
+              <Mic className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+
+            {/* List Queue button (Toggles sliding right-side list) */}
+            <button
+              id="immersive-queue-toggle"
+              onClick={() => {
+                setShowQueue(!showQueue);
+                setShowLyrics(false);
+              }}
+              className={`p-1.5 rounded-full hover:bg-white/5 transition-all active:scale-95 ${
+                showQueue ? 'text-[#fa2d48] bg-[#fa2d48]/10' : 'text-[#8e8e93] hover:text-white'
+              }`}
+              title="Seguintes"
+            >
+              <List className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+
+            {/* Volume Controls */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onMuteToggle}
+                className="p-1 rounded-full text-[#8e8e93] hover:text-white transition-colors"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-4 h-4 md:w-4.5 md:h-4.5 text-rose-500" />
+                ) : (
+                  <Volume2 className="w-4 h-4 md:w-4.5 md:h-4.5" />
+                )}
+              </button>
+              <input
+                id="immersive-volume-slider"
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={isMuted ? 0 : volume}
+                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+                className="w-14 md:w-16 h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#fa2d48] focus:outline-none"
+                style={{
+                  background: `linear-gradient(to right, #fa2d48 0%, #fa2d48 ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((isMuted ? 0 : volume) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                }}
+              />
+            </div>
           </div>
 
         </div>
       </footer>
+
     </div>
   );
 }
