@@ -1,0 +1,6 @@
+{
+  "name": "Celeiro Music",
+  "description": "Plataforma completa de streaming musical acústico, folk e roots inspirada no Apple Music Web.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
