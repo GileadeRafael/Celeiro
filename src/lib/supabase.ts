@@ -115,25 +115,22 @@ export const mockAuthService = {
     return false;
   },
 
-  async updateProfile(email: string, newEmail: string, photoUrl: string): Promise<{ data: any; error: any }> {
+  async updateProfile(email: string, photoUrl: string, newPassword?: string): Promise<{ data: any; error: any }> {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     const users = this.getUsers();
     const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
 
     if (userIndex !== -1) {
-      // Check if new email is already used by someone else
-      if (newEmail.toLowerCase() !== email.toLowerCase() && users.some(u => u.email.toLowerCase() === newEmail.toLowerCase())) {
-        return { data: null, error: { message: 'Este e-mail já está em uso por outra conta.' } };
-      }
-
-      users[userIndex].email = newEmail;
       users[userIndex].photoUrl = photoUrl;
+      if (newPassword) {
+        users[userIndex].passwordHash = newPassword;
+      }
       this.saveUsers(users);
 
       const updatedProfile = {
         name: users[userIndex].name,
-        email: newEmail,
+        email: email,
         photoUrl: photoUrl,
         confirmed: true
       };
