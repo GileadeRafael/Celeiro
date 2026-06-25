@@ -690,7 +690,7 @@ export default function App() {
   return (
     <div 
       id="celeiro-app-wrapper" 
-      className="flex h-screen bg-[#1c1c1e] font-sans text-stone-200 overflow-hidden relative"
+      className="flex h-screen bg-[#1f1f1f] font-sans text-stone-200 overflow-hidden relative"
     >
       
       {/* 1. Left Sidebar menu */}
@@ -712,8 +712,8 @@ export default function App() {
       />
 
       {/* 2. Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-h-0 min-w-0 p-6 pl-0 bg-transparent">
-        <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#242426]/70 border border-white/5 rounded-[28px] backdrop-blur-md shadow-2xl overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-h-0 min-w-0 p-4 pl-0 bg-transparent">
+        <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#1f1f1f]/60 border border-white/10 rounded-[24px] backdrop-blur-xl shadow-2xl overflow-hidden relative">
           
           {/* Top Header toolbar */}
           <Header 

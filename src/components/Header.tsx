@@ -83,41 +83,8 @@ export default function Header({
         </div>
       </div>
 
-      {/* Right: Network state simulator + Mix Actions */}
-      <div className="flex items-center gap-3">
-        {/* Offline Mode Switcher */}
-        <button
-          id="offline-toggle-button"
-          onClick={() => setOfflineMode(!offlineMode)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
-            offlineMode
-              ? 'bg-brand/10 text-brand border-brand/30'
-              : 'bg-stone-900 text-stone-400 border-stone-800 hover:bg-stone-850 hover:text-white'
-          }`}
-          title={offlineMode ? 'Você está em modo offline' : 'Mudar para modo offline'}
-        >
-          {offlineMode ? (
-            <>
-              <WifiOff className="w-3.5 h-3.5 text-brand" />
-              <span className="hidden xs:inline">Modo Offline</span>
-            </>
-          ) : (
-            <>
-              <Wifi className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="hidden xs:inline font-medium">Modo Online</span>
-            </>
-          )}
-        </button>
-
-        {/* Quick Shuffle Play */}
-        <button
-          id="header-shuffle-btn"
-          onClick={onShuffleAll}
-          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand to-brand/80 text-white font-bold text-xs shadow-md shadow-brand/10 hover:brightness-110 active:scale-95 transition-all"
-        >
-          Mix Aleatório
-        </button>
-      </div>
+      {/* Right: Empty spacer to center the pill navigation */}
+      <div className="flex items-center justify-end w-10 md:w-16"></div>
     </header>
   );
 }
