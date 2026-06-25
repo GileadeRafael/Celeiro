@@ -141,3 +141,165 @@ export const mockAuthService = {
     return { data: null, error: { message: 'Usuário não encontrado.' } };
   }
 };
+
+// --- USER DATA PERSISTENCE SERVICE ---
+export const userDataService = {
+  // Helpers to read/write local storage for fallback/unconfigured modes
+  getLocalData(email: string) {
+    const key = `celeiro_user_${email.toLowerCase()}_data`;
+    const data = localStorage.getItem(key);
+    if (data) {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  },
+
+  saveLocalData(email: string, data: any) {
+    const key = `celeiro_user_${email.toLowerCase()}_data`;
+    const current = this.getLocalData(email) || {};
+    const updated = { ...current, ...data };
+    localStorage.setItem(key, JSON.stringify(updated));
+  },
+
+  // GET FAVORITES
+  async getFavorites(email: string): Promise<string[]> {
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('celeiro_user_data')
+          .select('favorites')
+          .eq('user_email', email.toLowerCase())
+          .single();
+        
+        if (data && !error) {
+          return data.favorites || [];
+        }
+      } catch (e) {
+        console.warn('Supabase getFavorites failed, falling back to local storage', e);
+      }
+    }
+    const local = this.getLocalData(email);
+    return local?.favorites || [];
+  },
+
+  // SAVE FAVORITES
+  async saveFavorites(email: string, favorites: string[]): Promise<void> {
+    // 1. Always save locally first for instant access
+    this.saveLocalData(email, { favorites });
+
+    // 2. Save in Supabase
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { error } = await supabase
+          .from('celeiro_user_data')
+          .upsert({ 
+            user_email: email.toLowerCase(), 
+            favorites 
+          }, { onConflict: 'user_email' });
+        
+        if (error) {
+          console.error('Supabase saveFavorites upsert error:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase saveFavorites failed:', e);
+      }
+    }
+  },
+
+  // GET HISTORY
+  async getHistory(email: string): Promise<string[]> {
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('celeiro_user_data')
+          .select('playback_history')
+          .eq('user_email', email.toLowerCase())
+          .single();
+        
+        if (data && !error) {
+          return data.playback_history || [];
+        }
+      } catch (e) {
+        console.warn('Supabase getHistory failed, falling back to local storage', e);
+      }
+    }
+    const local = this.getLocalData(email);
+    return local?.playback_history || [];
+  },
+
+  // SAVE HISTORY
+  async saveHistory(email: string, history: string[]): Promise<void> {
+    this.saveLocalData(email, { playback_history: history });
+
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { error } = await supabase
+          .from('celeiro_user_data')
+          .upsert({ 
+            user_email: email.toLowerCase(), 
+            playback_history: history 
+          }, { onConflict: 'user_email' });
+        
+        if (error) {
+          console.error('Supabase saveHistory upsert error:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase saveHistory failed:', e);
+      }
+    }
+  },
+
+  // GET PLAYLISTS
+  async getPlaylists(email: string): Promise<any[]> {
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('celeiro_user_data')
+          .select('custom_playlists')
+          .eq('user_email', email.toLowerCase())
+          .single();
+        
+        if (data && !error) {
+          return data.custom_playlists || [];
+        }
+      } catch (e) {
+        console.warn('Supabase getPlaylists failed, falling back to local storage', e);
+      }
+    }
+    const local = this.getLocalData(email);
+    return local?.custom_playlists || [];
+  },
+
+  // SAVE PLAYLISTS
+  async savePlaylists(email: string, playlists: any[]): Promise<void> {
+    this.saveLocalData(email, { custom_playlists: playlists });
+
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { error } = await supabase
+          .from('celeiro_user_data')
+          .upsert({ 
+            user_email: email.toLowerCase(), 
+            custom_playlists: playlists 
+          }, { onConflict: 'user_email' });
+        
+        if (error) {
+          console.error('Supabase savePlaylists upsert error:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase savePlaylists failed:', e);
+      }
+    }
+  }
+};
+

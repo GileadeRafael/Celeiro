@@ -46,6 +46,8 @@ import BottomPlayer from './components/BottomPlayer';
 import FullScreenPlayer from './components/FullScreenPlayer';
 import LoginModal from './components/LoginModal';
 import ProfileModal from './components/ProfileModal';
+import PlaylistModal from './components/PlaylistModal';
+import { userDataService } from './lib/supabase';
 
 export default function App() {
   // --- Persistent Local States ---
@@ -101,6 +103,7 @@ export default function App() {
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   // --- Custom Premium Toast Notification System ---
@@ -191,10 +194,50 @@ export default function App() {
     return () => window.removeEventListener('message', handleOAuthMessage);
   }, []);
 
+  const [userDataLoaded, setUserDataLoaded] = useState<boolean>(false);
+
+  // Load user data on profile change
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (userProfile) {
+        setUserDataLoaded(false);
+        try {
+          const favs = await userDataService.getFavorites(userProfile.email);
+          const hist = await userDataService.getHistory(userProfile.email);
+          const playlists = await userDataService.getPlaylists(userProfile.email);
+
+          setFavorites(favs);
+          setPlaybackHistory(hist);
+          setCustomPlaylists(playlists);
+        } catch (e) {
+          console.error("Error loading user data:", e);
+        } finally {
+          setUserDataLoaded(true);
+        }
+      } else {
+        setUserDataLoaded(false);
+        // Restore to generic unlogged storage or defaults
+        const savedFavs = localStorage.getItem('celeiro_favorites');
+        setFavorites(savedFavs ? JSON.parse(savedFavs) : ['track-1', 'track-6', 'track-10']);
+        
+        const savedHist = localStorage.getItem('celeiro_playback_history');
+        setPlaybackHistory(savedHist ? JSON.parse(savedHist) : []);
+        
+        const savedPlaylists = localStorage.getItem('celeiro_custom_playlists');
+        setCustomPlaylists(savedPlaylists ? JSON.parse(savedPlaylists) : []);
+      }
+    };
+
+    loadUserData();
+  }, [userProfile]);
+
   // --- Sync storage ---
   useEffect(() => {
     localStorage.setItem('celeiro_favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (userProfile && userDataLoaded) {
+      userDataService.saveFavorites(userProfile.email, favorites);
+    }
+  }, [favorites, userProfile, userDataLoaded]);
 
   useEffect(() => {
     localStorage.setItem('celeiro_downloaded', JSON.stringify(downloaded));
@@ -202,7 +245,17 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('celeiro_custom_playlists', JSON.stringify(customPlaylists));
-  }, [customPlaylists]);
+    if (userProfile && userDataLoaded) {
+      userDataService.savePlaylists(userProfile.email, customPlaylists);
+    }
+  }, [customPlaylists, userProfile, userDataLoaded]);
+
+  useEffect(() => {
+    localStorage.setItem('celeiro_playback_history', JSON.stringify(playbackHistory));
+    if (userProfile && userDataLoaded) {
+      userDataService.saveHistory(userProfile.email, playbackHistory);
+    }
+  }, [playbackHistory, userProfile, userDataLoaded]);
 
   useEffect(() => {
     localStorage.setItem('celeiro_volume', volume.toString());
@@ -540,29 +593,41 @@ export default function App() {
   // --- Playlist Actions ---
 
   const handleCreatePlaylist = () => {
-    const name = prompt("Digite o nome da sua nova playlist:");
-    if (!name || name.trim() === '') return;
+    if (!userProfile) {
+      setIsLoginModalOpen(true);
+      showToast('Inicie sessão para criar suas próprias playlists!');
+      return;
+    }
+    setIsPlaylistModalOpen(true);
+  };
 
-    const desc = prompt("Digite uma descrição curta (opcional):") || "Criada por Rafael";
-
+  const handleCreatePlaylistConfirm = (name: string, description: string, coverUrl: string) => {
     const newPlaylist: Playlist = {
       id: `playlist-custom-${Date.now()}`,
       name: name,
-      description: desc,
-      coverUrl: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=400&auto=format&fit=crop&q=80', // stylish acoustic theme cover
+      description: description,
+      coverUrl: coverUrl,
       tracks: [],
       type: 'custom',
-      creator: 'Rafael da Silva',
+      creator: userProfile?.name || 'Rafael da Silva',
       updatedAt: 'Criada hoje'
     };
 
     setCustomPlaylists(prev => [...prev, newPlaylist]);
+    setSelectedPlaylistId(newPlaylist.id);
+    setActiveTab('library-playlists');
+    showToast(`Playlist "${name}" criada com sucesso!`);
   };
 
   const handleAddToPlaylist = (playlistId: string, trackId: string) => {
+    const targetTrack = TRACK_LIST.find(t => t.id === trackId);
     setCustomPlaylists(prev => prev.map(pl => {
       if (pl.id === playlistId) {
-        if (pl.tracks.includes(trackId)) return pl;
+        if (pl.tracks.includes(trackId)) {
+          showToast(`"${targetTrack?.title}" já está em "${pl.name}"`);
+          return pl;
+        }
+        showToast(`Adicionado "${targetTrack?.title}" à playlist "${pl.name}"`);
         return { ...pl, tracks: [...pl.tracks, trackId] };
       }
       return pl;
@@ -570,8 +635,10 @@ export default function App() {
   };
 
   const handleRemoveFromPlaylist = (playlistId: string, trackId: string) => {
+    const targetTrack = TRACK_LIST.find(t => t.id === trackId);
     setCustomPlaylists(prev => prev.map(pl => {
       if (pl.id === playlistId) {
+        showToast(`Removido "${targetTrack?.title}" de "${pl.name}"`);
         return { ...pl, tracks: pl.tracks.filter(id => id !== trackId) };
       }
       return pl;
@@ -1367,6 +1434,84 @@ export default function App() {
                 </div>
               )}
 
+              {/* TAB 4.5: LIBRARY HISTORY (Histórico) */}
+              {activeTab === 'library-history' && !selectedPlaylistId && (
+                <div id="history-view-pane" className="space-y-6 animate-fade-in">
+                  <div className="flex items-center justify-between border-b border-[#261E17]/40 pb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-brand/70 flex items-center justify-center text-white shadow-lg shadow-brand/10 border border-brand/20">
+                        <Clock className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-extrabold text-white">Seu Histórico de Ouvinte</h2>
+                        <p className="text-sm text-stone-400 mt-1">Sua jornada musical no Celeiro. Histórico de músicas reproduzidas sincronizado na nuvem.</p>
+                      </div>
+                    </div>
+                    {playbackHistory.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setPlaybackHistory([]);
+                          showToast('Histórico limpo com sucesso.');
+                        }}
+                        className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-xs font-bold text-stone-400 hover:text-white transition-all cursor-pointer"
+                      >
+                        Limpar Histórico
+                      </button>
+                    )}
+                  </div>
+
+                  {playbackHistory.length === 0 ? (
+                    <div className="py-16 text-center border border-dashed border-[#261E17] rounded-xl">
+                      <Clock className="w-8 h-8 text-stone-600 mx-auto mb-2" />
+                      <p className="text-sm text-stone-400 font-semibold">Sem rastro de poeira</p>
+                      <p className="text-xs text-stone-500 mt-1">As músicas que você ouvir vão aparecer aqui para você nunca perder uma moda de viola.</p>
+                    </div>
+                  ) : (
+                    <div className="bg-stone-950/40 rounded-xl border border-[#261E17]/40 overflow-hidden">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-[#261E17]/40 text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+                            <th className="py-3 pl-4 w-12 text-center">#</th>
+                            <th className="py-3 px-3">Música / Artista</th>
+                            <th className="py-3 px-3 hidden md:table-cell">Álbum</th>
+                            <th className="py-3 pr-4 w-40 text-right">Duração</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {playbackHistory
+                            .map(trackId => TRACK_LIST.find(t => t.id === trackId))
+                            .filter((t): t is Track => !!t)
+                            .map((track, idx) => (
+                              <TrackRow
+                                key={`${track.id}-history-${idx}`}
+                                track={track}
+                                index={idx}
+                                currentTrackId={currentTrackId}
+                                isPlaying={isPlaying}
+                                isFavorite={favorites.includes(track.id)}
+                                isDownloaded={downloaded.includes(track.id)}
+                                onPlayPause={() => {
+                                  if (currentTrackId === track.id) {
+                                    handlePlayPause();
+                                  } else {
+                                    handlePlayTrack(track.id);
+                                  }
+                                }}
+                                onToggleFavorite={handleToggleFavorite}
+                                onToggleDownload={handleToggleDownload}
+                                onAddToQueue={handleAddToQueue}
+                                onPlayNext={handlePlayNext}
+                                customPlaylists={customPlaylists}
+                                onAddToPlaylist={handleAddToPlaylist}
+                              />
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* TAB 5: LIBRARY OFFLINE / DOWNLOADED (Offline) */}
               {activeTab === 'library-offline' && !selectedPlaylistId && (
                 <div id="offline-view-pane" className="space-y-6 animate-fade-in">
@@ -1762,6 +1907,12 @@ export default function App() {
           localStorage.setItem('celeiro_user_profile', JSON.stringify(updatedProfile));
         }}
         showToast={showToast}
+      />
+
+      <PlaylistModal
+        isOpen={isPlaylistModalOpen}
+        onClose={() => setIsPlaylistModalOpen(false)}
+        onCreate={handleCreatePlaylistConfirm}
       />
 
       {/* 7. Premium Toast Notifications */}

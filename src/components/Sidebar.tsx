@@ -5,7 +5,11 @@ import {
   ExternalLink,
   Play,
   User,
-  LogOut
+  LogOut,
+  Heart,
+  Clock,
+  Plus,
+  Music
 } from 'lucide-react';
 import { Playlist } from '../types';
 
@@ -65,31 +69,120 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Main Navigation */}
-      <div className="px-3 pt-6 flex-1">
-        <ul className="space-y-1">
-          {mainNavItems.map((item) => {
-            const Icon = item.icon;
-            // Map search tab or browse default tab
-            const isActive = activeTab === item.id && !selectedPlaylistId;
-            return (
-              <li key={item.id}>
+      {/* Main Navigation and Library Scroll Container */}
+      <div className="px-3 pt-6 flex-1 overflow-y-auto scrollbar-none space-y-6">
+        <div>
+          <ul className="space-y-1">
+            {mainNavItems.map((item) => {
+              const Icon = item.icon;
+              // Map search tab or browse default tab
+              const isActive = activeTab === item.id && !selectedPlaylistId;
+              return (
+                <li key={item.id}>
+                  <button
+                    id={`nav-item-${item.id}`}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150 text-left cursor-pointer ${
+                      isActive
+                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#fa2d48]' : 'text-stone-400'}`} />
+                    {item.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {/* Library Section (Only visible when user is logged in) */}
+        {userProfile && (
+          <div className="space-y-5 animate-fade-in pt-2 border-t border-white/[0.06]">
+            <div>
+              <p className="px-3.5 text-[10px] font-extrabold text-stone-500 uppercase tracking-widest mb-2">Minha Biblioteca</p>
+              <ul className="space-y-1">
+                <li>
+                  <button
+                    onClick={() => {
+                      setActiveTab('library-favorites');
+                      setSelectedPlaylistId(null);
+                      setIsMobileSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
+                      activeTab === 'library-favorites' && !selectedPlaylistId
+                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${activeTab === 'library-favorites' && !selectedPlaylistId ? 'text-[#fa2d48] fill-current' : 'text-stone-400'}`} />
+                    Favoritos
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setActiveTab('library-history');
+                      setSelectedPlaylistId(null);
+                      setIsMobileSidebarOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
+                      activeTab === 'library-history' && !selectedPlaylistId
+                        ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
+                        : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
+                    }`}
+                  >
+                    <Clock className={`w-4 h-4 ${activeTab === 'library-history' && !selectedPlaylistId ? 'text-[#fa2d48]' : 'text-stone-400'}`} />
+                    Histórico
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-2 border-t border-white/[0.06]">
+              <div className="flex items-center justify-between px-3.5 mb-2">
+                <p className="text-[10px] font-extrabold text-stone-500 uppercase tracking-widest">Playlists</p>
                 <button
-                  id={`nav-item-${item.id}`}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-150 text-left cursor-pointer ${
-                    isActive
-                      ? 'bg-white/[0.08] text-[#fa2d48] font-semibold border border-white/[0.05]'
-                      : 'hover:bg-white/[0.04] text-stone-300 hover:text-white'
-                  }`}
+                  onClick={onCreatePlaylist}
+                  className="p-1 rounded-md hover:bg-white/10 text-[#fa2d48] transition-colors cursor-pointer"
+                  title="Criar nova playlist"
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#fa2d48]' : 'text-stone-400'}`} />
-                  {item.label}
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
-              </li>
-            );
-          })}
-        </ul>
+              </div>
+              
+              <ul className="space-y-1 max-h-[160px] overflow-y-auto scrollbar-none">
+                {customPlaylists.length === 0 ? (
+                  <li className="px-3.5 py-2 text-[11px] text-stone-500 italic">Nenhuma playlist criada</li>
+                ) : (
+                  customPlaylists.map((pl) => {
+                    const isSelected = selectedPlaylistId === pl.id;
+                    return (
+                      <li key={pl.id}>
+                        <button
+                          onClick={() => {
+                            setActiveTab('library-playlists');
+                            setSelectedPlaylistId(pl.id);
+                            setIsMobileSidebarOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 text-left cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#fa2d48]/10 text-[#fa2d48] font-bold border border-[#fa2d48]/20'
+                              : 'hover:bg-white/[0.03] text-stone-400 hover:text-white'
+                          }`}
+                        >
+                          <Music className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#fa2d48]' : 'text-stone-500'}`} />
+                          <span className="truncate flex-1">{pl.name}</span>
+                        </button>
+                      </li>
+                    );
+                  })
+                )}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Sidebar Footer (Matches Screenshot 3 / Custom Request) */}
