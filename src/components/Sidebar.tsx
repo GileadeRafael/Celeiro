@@ -91,16 +91,17 @@ export default function Sidebar({
       </div>
 
       {/* Sidebar Footer (Matches Screenshot 3 / Custom Request) */}
-      <div className="p-4 border-t border-white/[0.08] bg-black/20 backdrop-blur-md text-xs">
+      <div className="p-4 border-t border-white/[0.08] text-xs">
         <div className="mb-2">
           <a
             href="https://youtube.com/@CenaculoMusic"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 text-stone-300 hover:text-white font-medium text-[12px] mb-4 transition-all py-2.5 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] rounded-xl cursor-pointer"
+            className="flex items-center gap-2.5 text-stone-400 hover:text-white font-medium text-[13px] mb-4 px-2 transition-colors cursor-pointer"
           >
-            <Play className="w-3.5 h-3.5 text-[#fa2d48]" />
-            Cenáculo Music <ExternalLink className="w-3 h-3 text-stone-400" />
+            <Play className="w-4 h-4 text-[#fa2d48]" />
+            <span>Cenáculo Music</span>
+            <ExternalLink className="w-3 h-3 text-stone-500" />
           </a>
 
           {userProfile ? (
