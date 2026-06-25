@@ -29,7 +29,9 @@ import {
   WifiOff,
   MoreHorizontal,
   Search,
-  MinusCircle
+  MinusCircle,
+  Loader2,
+  Lock
 } from 'lucide-react';
 
 import { Track, Playlist, AppState } from './types';
@@ -99,6 +101,7 @@ export default function App() {
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
   // --- Custom Premium Toast Notification System ---
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -711,8 +714,13 @@ export default function App() {
         userProfile={userProfile}
         onLoginClick={() => setIsLoginModalOpen(true)}
         onLogout={() => {
-          setUserProfile(null);
-          localStorage.removeItem('celeiro_user_profile');
+          setIsLoggingOut(true);
+          setTimeout(() => {
+            setUserProfile(null);
+            localStorage.removeItem('celeiro_user_profile');
+            setIsLoggingOut(false);
+            showToast('Sessão encerrada com segurança.');
+          }, 1600);
         }}
         onProfileClick={() => setIsProfileModalOpen(true)}
       />
@@ -1764,6 +1772,34 @@ export default function App() {
         >
           <Sparkles className="w-3.5 h-3.5 text-[#fa2d48]" />
           <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* 8. Fullscreen Secure Sign Out Animation Overlay */}
+      {isLoggingOut && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-2xl animate-fade-in text-white select-none">
+          <div className="flex flex-col items-center max-w-sm text-center px-6">
+            <div className="relative mb-6">
+              {/* Spinning glow ring */}
+              <div className="absolute inset-0 rounded-full border border-[#fa2d48]/10 animate-ping" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#fa2d48]/20 to-[#fa2d48]/5 border border-[#fa2d48]/25 flex items-center justify-center relative shadow-xl shadow-[#fa2d48]/10">
+                <Loader2 className="w-10 h-10 text-[#fa2d48] animate-spin absolute" style={{ animationDuration: '1.2s' }} />
+                <Lock className="w-5 h-5 text-white absolute animate-pulse" />
+              </div>
+            </div>
+            
+            <h3 className="text-lg font-black tracking-tight mb-2">Encerrando Sessão</h3>
+            <p className="text-xs text-stone-400 mb-5 leading-normal">
+              Limpando tokens temporários e salvando suas playlists de forma segura...
+            </p>
+            
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-[#fa2d48] animate-pulse" />
+              <span className="text-[10px] font-mono tracking-wider text-stone-300 uppercase">
+                Conexão criptografada SSL
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
