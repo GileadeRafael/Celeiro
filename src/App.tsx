@@ -649,7 +649,7 @@ export default function App() {
     if (confirm("Tem certeza que deseja excluir esta playlist permanentemente?")) {
       setCustomPlaylists(prev => prev.filter(pl => pl.id !== playlistId));
       setSelectedPlaylistId(null);
-      setActiveTab('home');
+      setActiveTab('library-playlists');
     }
   };
 
@@ -1574,18 +1574,60 @@ export default function App() {
                 </div>
               )}
 
-              {/* TAB 6: LIBRARY CUSTOM PLAYLISTS - Fallback when clicked on menu but no specific selected playlist */}
+              {/* TAB 6: LIBRARY CUSTOM PLAYLISTS - Grid dashboard of custom playlists */}
               {activeTab === 'library-playlists' && !selectedPlaylistId && (
-                <div className="py-12 text-center border border-dashed border-[#261E17] rounded-xl space-y-4 max-w-md mx-auto my-12">
-                  <Music className="w-12 h-12 text-brand/40 mx-auto" />
-                  <h3 className="text-lg font-bold text-white">Nenhuma playlist selecionada</h3>
-                  <p className="text-xs text-stone-500 leading-relaxed px-6">Escolha uma playlist no menu esquerdo na seção de "Minhas Playlists" ou crie uma nova agora mesmo para começar a organizar sua coleção.</p>
-                  <button
-                    onClick={handleCreatePlaylist}
-                    className="px-4 py-2 rounded-lg bg-brand text-white font-bold text-xs"
-                  >
-                    Criar Nova Playlist
-                  </button>
+                <div id="custom-playlists-view" className="space-y-6 animate-fade-in">
+                  <div className="flex items-center justify-between border-b border-[#261E17]/40 pb-6">
+                    <div>
+                      <h2 className="text-3xl font-extrabold text-white">Suas Playlists</h2>
+                      <p className="text-sm text-stone-400 mt-1">Sua coleção de playlists personalizadas sincronizadas na nuvem.</p>
+                    </div>
+                    <button
+                      onClick={handleCreatePlaylist}
+                      className="px-4 py-2 rounded-xl bg-brand hover:bg-brand/95 text-white font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-lg shadow-brand/15 active:scale-95"
+                    >
+                      <Plus className="w-4 h-4" /> Criar Playlist
+                    </button>
+                  </div>
+
+                  {customPlaylists.length === 0 ? (
+                    <div className="py-12 text-center border border-dashed border-[#261E17] rounded-xl space-y-4 max-w-md mx-auto my-12">
+                      <Music className="w-12 h-12 text-brand/40 mx-auto" />
+                      <h3 className="text-lg font-bold text-white">Nenhuma playlist criada</h3>
+                      <p className="text-xs text-stone-500 leading-relaxed px-6">Escolha uma playlist no menu esquerdo na seção de "Minhas Playlists" ou crie uma nova agora mesmo para começar a organizar sua coleção.</p>
+                      <button
+                        onClick={handleCreatePlaylist}
+                        className="px-4 py-2 rounded-lg bg-brand text-white font-bold text-xs hover:bg-[#ff2d55] transition-colors"
+                      >
+                        Criar Nova Playlist
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {customPlaylists.map((playlist) => (
+                        <div 
+                          key={playlist.id}
+                          onClick={() => {
+                            setSelectedPlaylistId(playlist.id);
+                          }}
+                          className="group flex items-center gap-4 bg-stone-900/40 hover:bg-stone-850/60 p-3 rounded-xl border border-[#261E17]/30 transition-all cursor-pointer relative"
+                        >
+                          <img 
+                            src={playlist.coverUrl} 
+                            alt={playlist.name} 
+                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-[#261E17]/40"
+                          />
+                          <div className="min-w-0 flex-1 text-left">
+                            <span className="text-[10px] font-bold text-brand uppercase tracking-widest font-mono">
+                              {playlist.tracks.length} {playlist.tracks.length === 1 ? 'faixa' : 'faixas'}
+                            </span>
+                            <h4 className="text-sm font-bold text-white group-hover:text-brand transition-colors truncate mt-0.5">{playlist.name}</h4>
+                            <p className="text-xs text-stone-400 line-clamp-1 mt-0.5">{playlist.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </>
