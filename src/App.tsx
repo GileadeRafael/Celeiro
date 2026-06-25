@@ -43,6 +43,7 @@ import SongCard from './components/SongCard';
 import BottomPlayer from './components/BottomPlayer';
 import FullScreenPlayer from './components/FullScreenPlayer';
 import LoginModal from './components/LoginModal';
+import ProfileModal from './components/ProfileModal';
 
 export default function App() {
   // --- Persistent Local States ---
@@ -97,6 +98,7 @@ export default function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
 
   // --- Custom Premium Toast Notification System ---
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -712,6 +714,7 @@ export default function App() {
           setUserProfile(null);
           localStorage.removeItem('celeiro_user_profile');
         }}
+        onProfileClick={() => setIsProfileModalOpen(true)}
       />
 
       {/* 2. Main Content Canvas */}
@@ -1740,6 +1743,17 @@ export default function App() {
           setUserProfile(profile);
           localStorage.setItem('celeiro_user_profile', JSON.stringify(profile));
         }} 
+      />
+
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        userProfile={userProfile}
+        onProfileUpdate={(updatedProfile) => {
+          setUserProfile(updatedProfile);
+          localStorage.setItem('celeiro_user_profile', JSON.stringify(updatedProfile));
+        }}
+        showToast={showToast}
       />
 
       {/* 7. Premium Toast Notifications */}

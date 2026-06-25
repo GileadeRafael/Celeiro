@@ -21,6 +21,7 @@ interface SidebarProps {
   userProfile: { name: string; email: string; photoUrl: string } | null;
   onLoginClick: () => void;
   onLogout: () => void;
+  onProfileClick: () => void;
 }
 
 export default function Sidebar({
@@ -34,7 +35,8 @@ export default function Sidebar({
   setIsMobileSidebarOpen,
   userProfile,
   onLoginClick,
-  onLogout
+  onLogout,
+  onProfileClick
 }: SidebarProps) {
   
   const handleNavClick = (tab: any) => {
@@ -106,15 +108,21 @@ export default function Sidebar({
 
           {userProfile ? (
             <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/[0.04] border border-white/15 shadow-md">
-              <img 
-                src={userProfile.photoUrl} 
-                alt={userProfile.name} 
-                className="w-9 h-9 rounded-full border border-white/20 object-cover" 
-                referrerPolicy="no-referrer"
-              />
-              <div className="min-w-0 flex-1 text-left">
-                <p className="text-white font-bold text-xs truncate leading-tight">{userProfile.name}</p>
-                <p className="text-[#8e8e93] text-[10px] truncate leading-tight mt-0.5">{userProfile.email}</p>
+              <div 
+                onClick={onProfileClick}
+                className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+                title="Ver e editar perfil"
+              >
+                <img 
+                  src={userProfile.photoUrl} 
+                  alt={userProfile.name} 
+                  className="w-9 h-9 rounded-full border border-white/20 object-cover bg-stone-900" 
+                  referrerPolicy="no-referrer"
+                />
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="text-white font-bold text-xs truncate leading-tight">{userProfile.name}</p>
+                  <p className="text-[#8e8e93] text-[10px] truncate leading-tight mt-0.5">{userProfile.email}</p>
+                </div>
               </div>
               <button 
                 onClick={onLogout}
