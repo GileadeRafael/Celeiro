@@ -690,13 +690,7 @@ export default function App() {
   return (
     <div 
       id="celeiro-app-wrapper" 
-      className="flex h-screen font-sans text-stone-200 overflow-hidden bg-stone-950 relative"
-      style={{
-        backgroundImage: "radial-gradient(circle at center, rgba(20,20,20,0.4) 0%, rgba(10,10,10,0.85) 100%), url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1974&auto=format&fit=crop')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className="flex h-screen bg-[#1c1c1e] font-sans text-stone-200 overflow-hidden relative"
     >
       
       {/* 1. Left Sidebar menu */}
@@ -718,8 +712,8 @@ export default function App() {
       />
 
       {/* 2. Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-h-0 p-6 pl-0 bg-transparent">
-        <div className="flex-1 flex flex-col min-h-0 bg-stone-900/40 border border-white/10 rounded-[28px] backdrop-blur-[24px] shadow-2xl overflow-hidden relative">
+      <div className="flex-1 flex flex-col min-h-0 min-w-0 p-6 pl-0 bg-transparent">
+        <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#242426]/70 border border-white/5 rounded-[28px] backdrop-blur-md shadow-2xl overflow-hidden relative">
           
           {/* Top Header toolbar */}
           <Header 
