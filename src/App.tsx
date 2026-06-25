@@ -27,7 +27,9 @@ import {
   PlusCircle,
   Settings,
   WifiOff,
-  MoreHorizontal
+  MoreHorizontal,
+  Search,
+  MinusCircle
 } from 'lucide-react';
 
 import { Track, Playlist, AppState } from './types';
@@ -484,7 +486,8 @@ export default function App() {
       list = list.filter(
         t => t.title.toLowerCase().includes(query) || 
              t.artist.toLowerCase().includes(query) ||
-             t.album.toLowerCase().includes(query)
+             t.album.toLowerCase().includes(query) ||
+             (t.genre && t.genre.toLowerCase().includes(query))
       );
     }
 
@@ -746,63 +749,133 @@ export default function App() {
         {/* Inner page container */}
         <main className="flex-1 overflow-y-auto px-6 py-8 pb-32 custom-scrollbar">
           
-          {/* A. If user typed in search query, show custom results view instantly */}
-          {searchQuery.trim() !== '' ? (
-            <div id="search-results-pane" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-white font-sans">Resultado da busca por "{searchQuery}"</h2>
-                <button 
-                  onClick={() => setSearchQuery('')}
-                  className="text-xs text-brand hover:underline font-semibold"
-                >
-                  Limpar busca
-                </button>
+          {/* A. If we are on the search tab, render its integrated layout */}
+          {activeTab === 'search' && !selectedPlaylistId ? (
+            <div id="search-view-pane" className="space-y-8 animate-fade-in">
+              
+              {/* Centered Search Input styled like the mockup */}
+              <div className="flex justify-center w-full max-w-xl mx-auto pt-2 pb-2">
+                <div className="relative w-full">
+                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar por músicas, artistas ou álbuns..."
+                    className="w-full pl-12 pr-12 py-3 bg-[#2c2c2e] border border-white/5 rounded-full text-sm text-white placeholder-stone-400 focus:outline-none focus:border-[#fa2d48]/40 focus:ring-1 focus:ring-[#fa2d48]/40 transition-all font-sans shadow-lg"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-400 hover:text-white transition-colors"
+                    >
+                      Limpar
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {getFilteredTracks().length === 0 ? (
-                <div className="py-16 text-center border border-dashed border-[#261E17] rounded-xl">
-                  <AlertCircle className="w-8 h-8 text-stone-600 mx-auto mb-2" />
-                  <p className="text-sm text-stone-400 font-semibold">Nenhuma música encontrada</p>
-                  <p className="text-xs text-stone-500 mt-1">Experimente buscar por outros termos ou desative o Modo Offline.</p>
+              {searchQuery.trim() === '' ? (
+                <div className="space-y-6 pt-4">
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">Explorar categorias</h2>
+                  
+                  {/* Grid layout with exactly 2 categories: Worship and Pentecostal */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    {/* Worship Category Card */}
+                    <button
+                      onClick={() => setSearchQuery('Worship')}
+                      className="relative aspect-[16/7] md:aspect-[21/9] rounded-[24px] overflow-hidden cursor-pointer group shadow-xl border border-white/5 active:scale-[0.98] transition-all text-left w-full"
+                    >
+                      {/* Premium gradient representing worship */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#ff124f] via-[#fe0170] to-[#9a0441] opacity-95 group-hover:scale-105 transition-transform duration-500" />
+                      {/* Subtle elegant gloss highlight */}
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
+                      
+                      {/* Text in bottom-left corner */}
+                      <div className="absolute bottom-6 left-6 z-10">
+                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight font-sans">Worship</h3>
+                      </div>
+                    </button>
+
+                    {/* Pentecostal Category Card */}
+                    <button
+                      onClick={() => setSearchQuery('Pentecostal')}
+                      className="relative aspect-[16/7] md:aspect-[21/9] rounded-[24px] overflow-hidden cursor-pointer group shadow-xl border border-white/5 active:scale-[0.98] transition-all text-left w-full"
+                    >
+                      {/* Premium gradient representing pentecostal */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#ff5e36] via-[#ea3c12] to-[#7000ff] opacity-95 group-hover:scale-105 transition-transform duration-500" />
+                      {/* Subtle elegant gloss highlight */}
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
+                      
+                      {/* Text in bottom-left corner */}
+                      <div className="absolute bottom-6 left-6 z-10">
+                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight font-sans">Pentecostal</h3>
+                      </div>
+                    </button>
+
+                  </div>
                 </div>
               ) : (
-                <div className="bg-stone-950/40 rounded-xl border border-[#261E17]/40 overflow-hidden">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-[#261E17]/40 text-[10px] font-bold text-stone-500 uppercase tracking-wider">
-                        <th className="py-3 pl-4 w-12 text-center">#</th>
-                        <th className="py-3 px-3">Música / Artista</th>
-                        <th className="py-3 px-3 hidden md:table-cell">Álbum</th>
-                        <th className="py-3 pr-4 w-40 text-right">Duração</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getFilteredTracks().map((track, idx) => (
-                        <TrackRow
-                          key={track.id}
-                          track={track}
-                          index={idx}
-                          currentTrackId={currentTrackId}
-                          isPlaying={isPlaying}
-                          isFavorite={favorites.includes(track.id)}
-                          isDownloaded={downloaded.includes(track.id)}
-                          onPlayPause={() => {
-                            if (currentTrackId === track.id) {
-                              handlePlayPause();
-                            } else {
-                              handlePlayTrack(track.id, getFilteredTracks().map(t => t.id));
-                            }
-                          }}
-                          onToggleFavorite={handleToggleFavorite}
-                          onToggleDownload={handleToggleDownload}
-                          onAddToQueue={handleAddToQueue}
-                          onPlayNext={handlePlayNext}
-                          customPlaylists={customPlaylists}
-                          onAddToPlaylist={handleAddToPlaylist}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-6 animate-fade-in pt-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-white font-sans">
+                      Resultados para "{searchQuery}" ({getFilteredTracks().length})
+                    </h2>
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="text-xs text-[#fa2d48] hover:underline font-bold"
+                    >
+                      Limpar busca
+                    </button>
+                  </div>
+
+                  {getFilteredTracks().length === 0 ? (
+                    <div className="py-16 text-center border border-dashed border-white/5 rounded-2xl">
+                      <AlertCircle className="w-8 h-8 text-stone-600 mx-auto mb-2" />
+                      <p className="text-sm text-stone-400 font-bold">Nenhuma música encontrada</p>
+                      <p className="text-xs text-stone-500 mt-1">Experimente buscar por outros termos ou verifique a grafia.</p>
+                    </div>
+                  ) : (
+                    <div className="bg-[#1c1c1e]/40 rounded-2xl border border-white/5 overflow-hidden">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-white/5 text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+                            <th className="py-3 pl-4 w-12 text-center">#</th>
+                            <th className="py-3 px-3">Música / Artista</th>
+                            <th className="py-3 px-3 hidden md:table-cell">Álbum</th>
+                            <th className="py-3 pr-4 w-40 text-right">Duração</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getFilteredTracks().map((track, idx) => (
+                            <TrackRow
+                              key={track.id}
+                              track={track}
+                              index={idx}
+                              currentTrackId={currentTrackId}
+                              isPlaying={isPlaying}
+                              isFavorite={favorites.includes(track.id)}
+                              isDownloaded={downloaded.includes(track.id)}
+                              onPlayPause={() => {
+                                if (currentTrackId === track.id) {
+                                  handlePlayPause();
+                                } else {
+                                  handlePlayTrack(track.id, getFilteredTracks().map(t => t.id));
+                                }
+                              }}
+                              onToggleFavorite={handleToggleFavorite}
+                              onToggleDownload={handleToggleDownload}
+                              onAddToQueue={handleAddToQueue}
+                              onPlayNext={handlePlayNext}
+                              customPlaylists={customPlaylists}
+                              onAddToPlaylist={handleAddToPlaylist}
+                            />
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1503,108 +1576,127 @@ export default function App() {
             })()
           )}
         </main>
-      </div>
-    </div>
 
-      {/* 3. Floating Bottom Media Player bar */}
-      <BottomPlayer 
-        currentTrack={currentTrack}
-        isPlaying={isPlaying}
-        currentTime={currentTime}
-        duration={duration}
-        volume={volume}
-        isMuted={isMuted}
-        isShuffle={isShuffle}
-        repeatMode={repeatMode}
-        onPlayPause={handlePlayPause}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        onSeek={handleSeek}
-        onVolumeChange={setVolume}
-        onMuteToggle={handleMuteToggle}
-        onShuffleToggle={handleShuffleToggle}
-        onRepeatToggle={handleRepeatToggle}
-        onOpenFullScreen={() => setIsFullScreenOpen(true)}
-        isFavorite={currentTrack ? favorites.includes(currentTrack.id) : false}
-        onToggleFavorite={() => currentTrack && handleToggleFavorite(currentTrack.id)}
-        isDownloaded={currentTrack ? downloaded.includes(currentTrack.id) : false}
-        onToggleDownload={() => currentTrack && handleToggleDownload(currentTrack.id)}
-        onToggleQueueDrawer={() => setIsQueueDrawerOpen(!isQueueDrawerOpen)}
-        isQueueDrawerOpen={isQueueDrawerOpen}
-        synthActive={synthActive}
-      />
+        {/* 3. Floating Bottom Media Player bar */}
+        <BottomPlayer 
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          volume={volume}
+          isMuted={isMuted}
+          isShuffle={isShuffle}
+          repeatMode={repeatMode}
+          onPlayPause={handlePlayPause}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onSeek={handleSeek}
+          onVolumeChange={setVolume}
+          onMuteToggle={handleMuteToggle}
+          onShuffleToggle={handleShuffleToggle}
+          onRepeatToggle={handleRepeatToggle}
+          onOpenFullScreen={() => setIsFullScreenOpen(true)}
+          isFavorite={currentTrack ? favorites.includes(currentTrack.id) : false}
+          onToggleFavorite={() => currentTrack && handleToggleFavorite(currentTrack.id)}
+          isDownloaded={currentTrack ? downloaded.includes(currentTrack.id) : false}
+          onToggleDownload={() => currentTrack && handleToggleDownload(currentTrack.id)}
+          onToggleQueueDrawer={() => setIsQueueDrawerOpen(!isQueueDrawerOpen)}
+          isQueueDrawerOpen={isQueueDrawerOpen}
+          synthActive={synthActive}
+          customPlaylists={customPlaylists}
+          onAddToPlaylist={handleAddToPlaylist}
+        />
 
-      {/* 4. togglable Sliding Right-side Queue Drawer Panel */}
-      {isQueueDrawerOpen && currentTrack && (
-        <div 
-          id="queue-panel-drawer"
-          className="fixed right-0 top-16 bottom-[88px] w-80 md:w-96 bg-[#120E0B]/95 backdrop-blur-md border-l border-[#261E17]/40 z-30 p-6 flex flex-col select-none animate-slide-in-right"
-        >
-          <div className="flex items-center justify-between border-b border-[#261E17]/40 pb-4 mb-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <ListPlus className="w-4 h-4 text-brand" /> Fila de Reprodução
-            </h3>
-            {queue.length > 0 && (
+        {/* 4. togglable Sliding Right-side Queue Drawer Panel */}
+        {isQueueDrawerOpen && currentTrack && (
+          <div 
+            id="queue-panel-drawer"
+            className="absolute right-6 top-6 bottom-32 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-30 p-6 flex flex-col select-none rounded-[24px] shadow-2xl animate-slide-in-right"
+          >
+            <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+              <h3 className="text-lg font-black text-white font-sans tracking-tight">
+                Seguintes
+              </h3>
               <button 
                 onClick={handleClearQueue}
-                className="text-xs text-rose-400 hover:underline font-semibold"
+                className="text-xs text-[#fa2d48] hover:underline font-bold transition-all"
               >
-                Limpar Fila
+                Apagar
               </button>
-            )}
-          </div>
+            </div>
 
-          {/* Current track playing */}
-          <div className="mb-4">
-            <p className="text-[10px] font-bold text-brand uppercase tracking-wider mb-2">Tocando Agora</p>
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-brand/5 border border-brand/10">
-              <img src={currentTrack.coverUrl} className="w-10 h-10 rounded object-cover" />
-              <div className="min-w-0 flex-1">
-                <span className="block text-xs font-bold text-white truncate">{currentTrack.title}</span>
-                <span className="block text-[10px] text-stone-400 truncate">{currentTrack.artist}</span>
-              </div>
+            {/* List of upcoming tracks */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+              {(() => {
+                const upcoming = queue.length > 0 
+                  ? queue.map(id => TRACK_LIST.find(t => t.id === id)).filter((t): t is Track => !!t)
+                  : TRACK_LIST.filter(t => t.id !== currentTrackId);
+
+                if (upcoming.length === 0) {
+                  return (
+                    <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl text-stone-500 text-xs leading-relaxed">
+                      Nenhuma música a seguir.
+                    </div>
+                  );
+                }
+
+                return upcoming.map((track, idx) => {
+                  const formatDuration = (secs: number) => {
+                    if (isNaN(secs)) return '0:00';
+                    const mins = Math.floor(secs / 60);
+                    const remain = Math.floor(secs % 60);
+                    return `${mins}:${remain < 10 ? '0' : ''}${remain}`;
+                  };
+
+                  return (
+                    <div 
+                      key={`${track.id}-${idx}`}
+                      className="flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.04] group transition-all"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Album Art with hovering minus icon */}
+                        <div className="relative shrink-0 w-10 h-10 rounded-lg overflow-hidden border border-white/5">
+                          <img src={track.coverUrl} className="w-full h-full object-cover" />
+                          
+                          {/* Red minus button on hover over album cover */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (queue.length > 0) {
+                                handleRemoveFromQueue(track.id);
+                              } else {
+                                // If auto queue, we can skip it by playing next or just remove it temporarily
+                                setQueue(prev => prev.filter(id => id !== track.id));
+                              }
+                            }}
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            title="Remover"
+                          >
+                            <MinusCircle className="w-5 h-5 text-[#fa2d48] fill-[#1c1c1e]" />
+                          </button>
+                        </div>
+
+                        {/* Title & Artist */}
+                        <div className="min-w-0 flex-1">
+                          <span className="block text-xs font-bold text-stone-200 truncate leading-tight group-hover:text-white transition-colors">{track.title}</span>
+                          <span className="block text-[10px] text-[#8e8e93] truncate leading-tight mt-0.5">{track.artist}</span>
+                        </div>
+                      </div>
+
+                      {/* Exact minutage of the song on the right */}
+                      <span className="text-xs font-mono font-medium text-[#8e8e93] pl-2 shrink-0 select-none">
+                        {formatDuration(track.duration)}
+                      </span>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
+        )}
 
-          {/* Upcoming list */}
-          <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
-            <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-2">A seguir</p>
-            
-            {queue.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-[#261E17]/45 rounded-xl text-stone-500 text-xs leading-relaxed">
-                Nenhuma música a seguir. O Celeiro continuará tocando faixas recomendadas.
-              </div>
-            ) : (
-              queue.map((trackId, idx) => {
-                const track = TRACK_LIST.find(t => t.id === trackId);
-                if (!track) return null;
-                return (
-                  <div 
-                    key={`${trackId}-${idx}`}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-stone-900 group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img src={track.coverUrl} className="w-8 h-8 rounded object-cover" />
-                      <div className="min-w-0">
-                        <span className="block text-xs font-semibold text-stone-200 truncate">{track.title}</span>
-                        <span className="block text-[9px] text-stone-500 truncate">{track.artist}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleRemoveFromQueue(trackId)}
-                      className="p-1 rounded text-stone-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Remover da fila"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      )}
+      </div>
+    </div>
 
       {/* 5. Immersive Fullscreen Scrolling Lyrics & Ambient Shifting background overlay */}
       {isFullScreenOpen && currentTrack && (

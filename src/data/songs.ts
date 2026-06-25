@@ -10,7 +10,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     duration: 180,
-    genre: 'Pagode',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Falta de Amor - Ao Vivo' },
       { time: 5, text: 'Essa falta de amor tá me machucando...' }
@@ -24,7 +24,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     duration: 195,
-    genre: 'Pagode',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Saudade Inconveniente' }
     ]
@@ -37,7 +37,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     duration: 165,
-    genre: 'Sertanejo',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 Localiza Aí Bebê' }
     ]
@@ -50,7 +50,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
     duration: 210,
-    genre: 'Reggae',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Reggae Sua Fé' }
     ]
@@ -65,7 +65,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
     duration: 220,
-    genre: 'Brazilian Bass',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 Magnata' }
     ]
@@ -78,7 +78,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
     duration: 155,
-    genre: 'Hip-Hop',
+    genre: 'Pentecostal',
     isExplicit: true,
     lyrics: [
       { time: 0, text: '🎵 Face Down' }
@@ -92,7 +92,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
     duration: 170,
-    genre: 'Sertanejo',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Moça Pra Casar' }
     ]
@@ -105,7 +105,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
     duration: 185,
-    genre: 'Arrocha',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 Algema de Seda' }
     ]
@@ -120,7 +120,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
     duration: 240,
-    genre: 'Indie',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 A Sunset' }
     ]
@@ -133,7 +133,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
     duration: 175,
-    genre: 'Sertanejo',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 Só Com Ela' }
     ]
@@ -146,7 +146,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3',
     duration: 145,
-    genre: 'Hip-Hop',
+    genre: 'Pentecostal',
     isExplicit: true,
     lyrics: [
       { time: 0, text: '🎵 Totem' }
@@ -160,7 +160,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
     duration: 190,
-    genre: 'Sertanejo',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Quando A Onda Passar' }
     ]
@@ -175,7 +175,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3',
     duration: 200,
-    genre: 'R&B',
+    genre: 'Worship',
     lyrics: [
       { time: 0, text: '🎵 Talking Dirty' }
     ]
@@ -188,7 +188,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3',
     duration: 185,
-    genre: 'Indie Pop',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 FIFA' }
     ]
@@ -201,7 +201,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3',
     duration: 175,
-    genre: 'House',
+    genre: 'Pentecostal',
     lyrics: [
       { time: 0, text: '🎵 Ripa Na Xulipa' }
     ]
@@ -214,7 +214,7 @@ export const TRACK_LIST: Track[] = [
     coverUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&auto=format&fit=crop&q=80',
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     duration: 215,
-    genre: 'R&B / Afrobeat',
+    genre: 'Worship',
     isExplicit: true,
     lyrics: [
       { time: 0, text: '🎵 Man On A Mission' }
