@@ -23,7 +23,7 @@ export default function Header({
   onClearCache
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-[#0E0B09]/80 backdrop-blur-md border-b border-[#261E17] text-white">
+    <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-transparent border-b border-white/10 text-white">
       {/* Left: Mobile Menu Trigger + Context Title */}
       <div className="flex items-center gap-4">
         <button

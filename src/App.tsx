@@ -96,6 +96,21 @@ export default function App() {
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
 
+  // --- Custom Premium Toast Notification System ---
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+  };
+
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
   // --- Refs ---
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const synthIntervalRef = useRef<any>(null);
@@ -289,7 +304,7 @@ export default function App() {
   const handlePlayTrack = (trackId: string, trackListContext: string[] = []) => {
     // Check offline constraints
     if (offlineMode && !downloaded.includes(trackId)) {
-      alert("Esta música não está baixada. Desative o Modo Offline para reproduzir.");
+      showToast("Esta música não está baixada. Desative o Modo Offline para reproduzir.");
       return;
     }
 
@@ -582,7 +597,7 @@ export default function App() {
       : station.tracks;
 
     if (radioTracks.length === 0) {
-      alert("Esta rádio não possui músicas baixadas no momento. Conecte-se para sintonizar.");
+      showToast("Esta rádio não possui músicas baixadas no momento. Conecte-se para sintonizar.");
       return;
     }
 
@@ -694,10 +709,10 @@ export default function App() {
       />
 
       {/* 2. Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-h-0 relative">
-        
-        {/* Top Header toolbar */}
-        {activeTab !== 'browse' && (
+      <div className="flex-1 flex flex-col min-h-0 p-4 pl-0 bg-[#1f1f1f]">
+        <div className="flex-1 flex flex-col min-h-0 bg-[#1f1f1f]/40 border border-white/10 rounded-[24px] backdrop-blur-xl shadow-2xl overflow-hidden relative">
+          
+          {/* Top Header toolbar */}
           <Header 
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -714,7 +729,6 @@ export default function App() {
               }
             }}
           />
-        )}
 
         {/* Offline Global Warning Bar banner */}
         {offlineMode && (
@@ -928,34 +942,30 @@ export default function App() {
                   <h2 className="text-[32px] font-extrabold text-white tracking-tight pt-2">Novidades</h2>
 
                   {/* Banners Slider (Functional Carousel) */}
-                  <div className="relative group/slider">
+                  <div className="relative group/slider overflow-hidden rounded-[24px]">
                     <div 
                       ref={sliderRef}
-                      className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-mandatory pr-6"
+                      className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none snap-x snap-mandatory pr-6 pb-2"
                     >
                       {featuredBanners.map((banner) => (
                         <div 
                           key={banner.trackId + banner.title}
-                          className="flex flex-col flex-shrink-0 w-full md:w-[32%] snap-start group/card cursor-pointer" 
+                          className="flex flex-col flex-shrink-0 w-[170px] md:w-[210px] snap-start group/card cursor-pointer" 
                           onClick={() => handlePlayTrack(banner.trackId, TRACK_LIST.map(t => t.id))}
                         >
-                          <span className="text-[10px] font-bold text-[#8e8e93] uppercase tracking-wider">{banner.subtitle}</span>
-                          <h3 className="text-[18px] font-bold text-white mt-1 leading-tight group-hover/card:text-[#fa2d48] transition-colors font-sans truncate">{banner.title}</h3>
-                          <span className="text-xs text-[#8e8e93] mt-0.5 block truncate">{banner.buttonText}</span>
-                          <div className="relative mt-3 aspect-[16/10] rounded-xl overflow-hidden border border-white/5">
-                            <img src={banner.cover} className="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-105" />
-                            {banner.description && (
-                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 flex flex-col justify-end">
-                                <p className="text-[12.5px] text-white font-medium leading-snug line-clamp-2">{banner.description}</p>
-                              </div>
-                            )}
+                          <div className="relative aspect-square rounded-[24px] overflow-hidden border border-white/10 bg-stone-900 shadow-md">
+                            <img src={banner.cover} className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-110" />
+                            
                             {/* Play Button hover overlay */}
-                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">
-                              <div className="w-12 h-12 rounded-full bg-white/95 text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-300">
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-350">
                                 <Play className="w-5 h-5 fill-current text-black ml-0.5" />
                               </div>
                             </div>
                           </div>
+                          
+                          <h3 className="text-sm font-bold text-white mt-3 leading-tight group-hover/card:text-[#fa2d48] transition-colors font-sans truncate">{banner.title}</h3>
+                          <span className="text-[11px] text-[#8e8e93] mt-0.5 block truncate">{banner.subtitle}</span>
                         </div>
                       ))}
                     </div>
@@ -966,7 +976,7 @@ export default function App() {
                         e.stopPropagation();
                         scrollSlider('left');
                       }}
-                      className="absolute top-[60%] -left-4 -translate-y-1/2 w-8 h-12 rounded-r-md bg-black/45 hover:bg-black/65 border-r border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
+                      className="absolute top-[40%] -left-2 -translate-y-1/2 w-8 h-12 rounded-r-md bg-black/45 hover:bg-black/65 border-r border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -977,7 +987,7 @@ export default function App() {
                         e.stopPropagation();
                         scrollSlider('right');
                       }}
-                      className="absolute top-[60%] -right-4 -translate-y-1/2 w-8 h-12 rounded-l-md bg-black/45 hover:bg-black/65 border-l border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
+                      className="absolute top-[40%] -right-2 -translate-y-1/2 w-8 h-12 rounded-l-md bg-black/45 hover:bg-black/65 border-l border-y border-white/10 flex items-center justify-center cursor-pointer text-white hidden md:flex transition-all z-10 active:scale-95"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -1037,7 +1047,7 @@ export default function App() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  alert(`Opções para: ${track.title}`);
+                                  showToast(`Opções para: ${track.title}`);
                                 }}
                                 className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                               >
@@ -1091,7 +1101,7 @@ export default function App() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  alert(`Opções para: ${track.title}`);
+                                  showToast(`Opções para: ${track.title}`);
                                 }}
                                 className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                               >
@@ -1145,7 +1155,7 @@ export default function App() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  alert(`Opções para: ${track.title}`);
+                                  showToast(`Opções para: ${track.title}`);
                                 }}
                                 className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                               >
@@ -1199,7 +1209,7 @@ export default function App() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  alert(`Opções para: ${track.title}`);
+                                  showToast(`Opções para: ${track.title}`);
                                 }}
                                 className="p-1 rounded text-stone-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                               >
@@ -1573,6 +1583,7 @@ export default function App() {
           )}
         </main>
       </div>
+    </div>
 
       {/* 3. Floating Bottom Media Player bar */}
       <BottomPlayer 
@@ -1711,6 +1722,17 @@ export default function App() {
           localStorage.setItem('celeiro_user_profile', JSON.stringify(profile));
         }} 
       />
+
+      {/* 7. Premium Toast Notifications */}
+      {toastMessage && (
+        <div 
+          id="custom-toast-notification"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-stone-900/95 border border-white/10 text-white font-medium text-xs shadow-xl backdrop-blur-md animate-fade-in"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#fa2d48]" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
     </div>
   );
