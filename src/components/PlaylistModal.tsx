@@ -14,7 +14,7 @@ const PRESET_COVERS = [
   { id: '1', name: 'Adoração Profunda', url: 'https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=600&q=80' },
   { id: '2', name: 'Luzes do Altar', url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=600&q=80' },
   { id: '3', name: 'Louvor e Comunhão', url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80' },
-  { id: '4', name: 'Céu e Paz', url: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80' },
+  { id: '4', name: 'Céu e Nuvens', url: 'https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=600&q=80' },
 ];
 
 export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistModalProps) {
@@ -62,28 +62,28 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/85 backdrop-blur-xl transition-opacity duration-300 animate-fade-in"
         onClick={onClose}
       />
 
-      {/* 16:9 Ratio Inspired Large Modal Container */}
-      <div className="relative w-full max-w-4xl aspect-[16/10] md:aspect-[16/9.5] bg-[#1a1a1c] border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10 animate-scale-up text-white flex flex-col md:flex-row select-none">
+      {/* Dynamic Heights Large Modal Container (No aspect ratio to avoid squishing and scrollbars) */}
+      <div className="relative w-full max-w-4xl bg-[#1a1a1c] border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10 animate-scale-up text-white flex flex-col md:flex-row select-none md:items-stretch h-auto">
         
         {/* Left Side: 16:9 Dynamic Preview Frame */}
-        <div className="w-full md:w-[45%] bg-[#121214] border-b md:border-b-0 md:border-r border-white/5 p-6 flex flex-col justify-between relative overflow-hidden">
+        <div className="w-full md:w-[42%] bg-[#121214] border-b md:border-b-0 md:border-r border-white/5 p-6 flex flex-col justify-between relative overflow-hidden">
           
           <div className="absolute inset-0 bg-gradient-to-b from-[#fa2d48]/5 via-transparent to-black/40 pointer-events-none" />
 
           <div className="relative z-10 text-left">
-            <h4 className="text-sm font-black text-white mt-1">Capa da sua Playlist</h4>
+            <h4 className="text-sm font-black text-white">Capa da sua Playlist</h4>
             <p className="text-[11px] text-stone-400 mt-1">Veja em tempo real como ficará a identidade visual da sua coleção de louvor.</p>
           </div>
 
           {/* 16:9 Cover Frame Card */}
-          <div className="my-4 relative z-10 w-full aspect-[16/9] rounded-2xl overflow-hidden border border-white/10 bg-[#1c1c1e] shadow-2xl group transition-all duration-300">
+          <div className="my-6 relative z-10 w-full aspect-[16/9] rounded-2xl overflow-hidden border border-white/10 bg-[#1c1c1e] shadow-2xl group transition-all duration-300">
             <img 
               src={currentCover} 
               alt="Cover Preview" 
@@ -112,7 +112,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
         </div>
 
         {/* Right Side: Setup Form fields */}
-        <div className="flex-1 p-6 md:p-8 flex flex-col justify-between overflow-y-auto relative text-left">
+        <div className="flex-1 p-5 md:p-6 flex flex-col justify-center relative text-left">
           
           {/* Close Button */}
           <button 
@@ -124,21 +124,21 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
             <X className="w-4 h-4" />
           </button>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Title / Description Header */}
             <div>
-              <h3 className="text-xl font-black tracking-tight flex items-center gap-2 text-white">
-                <FolderPlus className="w-5.5 h-5.5 text-[#fa2d48]" />
+              <h3 className="text-lg font-black tracking-tight flex items-center gap-2 text-white">
+                <FolderPlus className="w-5 h-5 text-[#fa2d48]" />
                 Criar Nova Playlist
               </h3>
-              <p className="text-xs text-stone-400 mt-1">Inicie uma nova lista de reprodução com os louvores que tocam seu coração.</p>
+              <p className="text-xs text-stone-400 mt-0.5">Inicie uma nova lista de reprodução com os louvores que tocam seu coração.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               
               {/* Name field */}
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1.5 px-1">
+                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1 px-1">
                   Nome da Playlist *
                 </label>
                 <div className="relative flex items-center">
@@ -150,14 +150,14 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex: Louvores de Domingo"
                     maxLength={40}
-                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
                   />
                 </div>
               </div>
 
               {/* Description field */}
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1.5 px-1">
+                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1 px-1">
                   Descrição (opcional)
                 </label>
                 <div className="relative flex items-center">
@@ -168,14 +168,14 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Ex: Seleção especial com canções para oração e intimidade."
                     maxLength={100}
-                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
+                    className="w-full bg-[#121214] border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white placeholder-stone-600 font-medium focus:outline-none focus:border-[#fa2d48] focus:ring-1 focus:ring-[#fa2d48] transition-all"
                   />
                 </div>
               </div>
 
               {/* Cover Image Selection Options */}
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2 px-1">
+                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1.5 px-1">
                   Escolha uma capa predefinida
                 </label>
 
@@ -210,8 +210,8 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                 </div>
 
                 {/* File Upload Area */}
-                <div className="mt-4">
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2 px-1">
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1.5 px-1">
                     Ou envie uma imagem do seu dispositivo
                   </label>
                   <div className="relative">
@@ -224,18 +224,18 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                     />
                     <label
                       htmlFor="playlist-cover-upload"
-                      className="flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-[#fa2d48]/50 bg-[#121214] hover:bg-[#121214]/80 rounded-xl py-4 px-4 text-center cursor-pointer transition-all group"
+                      className="flex flex-col items-center justify-center border border-dashed border-white/10 hover:border-[#fa2d48]/50 bg-[#121214] hover:bg-[#121214]/80 rounded-xl py-3 px-4 text-center cursor-pointer transition-all group"
                     >
-                      <ImageIcon className="w-6 h-6 text-stone-500 group-hover:text-[#fa2d48] mb-1.5 transition-colors" />
+                      <ImageIcon className="w-5 h-5 text-stone-500 group-hover:text-[#fa2d48] mb-1 transition-colors" />
                       {uploadedCover ? (
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold text-emerald-400 block">✓ Imagem carregada com sucesso</span>
-                          <span className="text-[10px] text-stone-500 block">Clique para alterar a imagem</span>
+                        <div className="space-y-0.5">
+                          <span className="text-[11px] font-bold text-emerald-400 block">✓ Imagem carregada com sucesso</span>
+                          <span className="text-[9px] text-stone-500 block">Clique para alterar a imagem</span>
                         </div>
                       ) : (
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold text-stone-300 group-hover:text-white transition-colors">Escolher imagem de capa</span>
-                          <span className="text-[10px] text-stone-500 block">Formatos aceitos: JPG, PNG, WEBP</span>
+                        <div className="space-y-0.5">
+                          <span className="text-[11px] font-bold text-stone-300 group-hover:text-white transition-colors">Escolher imagem de capa</span>
+                          <span className="text-[9px] text-stone-500 block">Formatos aceitos: JPG, PNG, WEBP</span>
                         </div>
                       )}
                     </label>
@@ -243,7 +243,7 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                       <button 
                         type="button"
                         onClick={() => setUploadedCover('')}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 text-stone-400 hover:text-white text-xs hover:bg-black/80 transition-all cursor-pointer"
+                        className="absolute top-2 right-2 p-1 rounded-lg bg-black/60 text-stone-400 hover:text-white text-xs hover:bg-black/80 transition-all cursor-pointer"
                         title="Remover imagem enviada"
                       >
                         <X className="w-3 h-3" />
@@ -253,26 +253,26 @@ export default function PlaylistModal({ isOpen, onClose, onCreate }: PlaylistMod
                 </div>
 
                 {!selectedPreset && !uploadedCover && (
-                  <p className="text-[10px] text-[#fa2d48] mt-2 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#fa2d48] animate-pulse" />
+                  <p className="text-[9px] text-[#fa2d48] mt-1.5 font-semibold flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-[#fa2d48] animate-pulse" />
                     Capa padrão com um "C" será definida automaticamente.
                   </p>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-white/5 mt-6">
+              <div className="flex gap-3 pt-3 border-t border-white/5 mt-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 rounded-xl text-xs font-bold border border-white/10 hover:bg-white/5 text-stone-300 transition-all cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-white/10 hover:bg-white/5 text-stone-300 transition-all cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={!name.trim()}
-                  className="flex-1 py-3 rounded-xl text-xs font-black bg-[#fa2d48] hover:bg-[#ff2d55] text-white flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#fa2d48]/15 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-[#fa2d48] hover:bg-[#ff2d55] text-white flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-[#fa2d48]/15 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Criar Playlist
