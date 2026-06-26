@@ -300,6 +300,51 @@ export const userDataService = {
         console.warn('Supabase savePlaylists failed:', e);
       }
     }
+  },
+
+  // GET PLAY COUNTS
+  async getPlayCounts(email: string): Promise<Record<string, number>> {
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('celeiro_user_data')
+          .select('play_counts')
+          .eq('user_email', email.toLowerCase())
+          .single();
+        
+        if (data && !error) {
+          return data.play_counts || {};
+        }
+      } catch (e) {
+        console.warn('Supabase getPlayCounts failed, falling back to local storage', e);
+      }
+    }
+    const local = this.getLocalData(email);
+    return local?.play_counts || {};
+  },
+
+  // SAVE PLAY COUNTS
+  async savePlayCounts(email: string, playCounts: Record<string, number>): Promise<void> {
+    this.saveLocalData(email, { play_counts: playCounts });
+
+    const supabase = getSupabase();
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { error } = await supabase
+          .from('celeiro_user_data')
+          .upsert({ 
+            user_email: email.toLowerCase(), 
+            play_counts: playCounts 
+          }, { onConflict: 'user_email' });
+        
+        if (error) {
+          console.error('Supabase savePlayCounts upsert error:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase savePlayCounts failed:', e);
+      }
+    }
   }
 };
 

@@ -50,11 +50,28 @@ import ProfileModal from './components/ProfileModal';
 import PlaylistModal from './components/PlaylistModal';
 import { userDataService } from './lib/supabase';
 
+const DEFAULT_PLAY_COUNTS: Record<string, number> = {};
+
+const formatPlayCount = (count: number): string => {
+  if (count >= 1000000) {
+    return (count / 1000000).toFixed(1).replace('.0', '') + 'M';
+  }
+  if (count >= 1000) {
+    return (count / 1000).toFixed(1).replace('.0', '') + 'k';
+  }
+  return count.toString();
+};
+
 export default function App() {
   // --- Persistent Local States ---
   const [favorites, setFavorites] = useState<string[]>(() => {
     const saved = localStorage.getItem('celeiro_favorites');
     return saved ? JSON.parse(saved) : ['track-1', 'track-6', 'track-10']; // pre-favorite some beautiful folk/pagode
+  });
+
+  const [playCounts, setPlayCounts] = useState<Record<string, number>>(() => {
+    const saved = localStorage.getItem('celeiro_play_counts_real');
+    return saved ? JSON.parse(saved) : DEFAULT_PLAY_COUNTS;
   });
 
   const [downloaded, setDownloaded] = useState<string[]>(() => {
@@ -242,10 +259,14 @@ export default function App() {
           const favs = await userDataService.getFavorites(userProfile.email);
           const hist = await userDataService.getHistory(userProfile.email);
           const playlists = await userDataService.getPlaylists(userProfile.email);
+          const counts = await userDataService.getPlayCounts(userProfile.email);
 
           setFavorites(favs);
           setPlaybackHistory(hist);
           setCustomPlaylists(playlists);
+          if (counts && Object.keys(counts).length > 0) {
+            setPlayCounts(counts);
+          }
         } catch (e) {
           console.error("Error loading user data:", e);
         } finally {
@@ -262,6 +283,9 @@ export default function App() {
         
         const savedPlaylists = localStorage.getItem('celeiro_custom_playlists');
         setCustomPlaylists(savedPlaylists ? JSON.parse(savedPlaylists) : []);
+
+        const savedCounts = localStorage.getItem('celeiro_play_counts_real');
+        setPlayCounts(savedCounts ? JSON.parse(savedCounts) : DEFAULT_PLAY_COUNTS);
       }
     };
 
@@ -275,6 +299,22 @@ export default function App() {
       userDataService.saveFavorites(userProfile.email, favorites);
     }
   }, [favorites, userProfile, userDataLoaded]);
+
+  useEffect(() => {
+    localStorage.setItem('celeiro_play_counts_real', JSON.stringify(playCounts));
+    if (userProfile && userDataLoaded) {
+      userDataService.savePlayCounts(userProfile.email, playCounts);
+    }
+  }, [playCounts, userProfile, userDataLoaded]);
+
+  useEffect(() => {
+    if (currentTrackId) {
+      setPlayCounts(prev => ({
+        ...prev,
+        [currentTrackId]: (prev[currentTrackId] || 0) + 1
+      }));
+    }
+  }, [currentTrackId]);
 
   useEffect(() => {
     localStorage.setItem('celeiro_downloaded', JSON.stringify(downloaded));
@@ -1415,50 +1455,68 @@ export default function App() {
                       </div>
                     </section>
 
-                    {/* Column 2: Popular Playlists */}
+                    {/* Column 2: As Mais Ouvidas */}
                     <section className="space-y-4">
                       <div className="flex items-center gap-2">
                         <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/5">
                           <Sparkles className="w-4 h-4 text-brand animate-pulse" />
                         </div>
                         <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
-                          Playlists Populares
+                          As Mais Ouvidas
                         </h3>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          { id: 'pop-1', name: 'Day at the Park', gradient: 'bg-gradient-to-br from-emerald-500 to-teal-700', tracks: ['track-1', 'track-2', 'track-3'] },
-                          { id: 'pop-2', name: 'Feeling Happy', gradient: 'bg-gradient-to-br from-amber-400 to-yellow-600', tracks: ['track-4', 'track-5'] },
-                          { id: 'pop-3', name: 'Positivity', gradient: 'bg-gradient-to-br from-blue-500 to-cyan-600', tracks: ['track-6', 'track-7'] },
-                          { id: 'pop-4', name: 'Morning Commute', gradient: 'bg-gradient-to-br from-orange-500 to-amber-600', tracks: ['track-12', 'track-13'] },
-                          { id: 'pop-5', name: 'Joy', gradient: 'bg-gradient-to-br from-orange-600 to-red-600', tracks: ['track-8', 'track-9'] },
-                          { id: 'pop-6', name: 'Feeling Confident', gradient: 'bg-gradient-to-br from-pink-500 to-rose-600', tracks: ['track-14', 'track-15'] },
-                          { id: 'pop-7', name: 'Starting Over', gradient: 'bg-gradient-to-br from-stone-500 to-stone-700', tracks: ['track-10', 'track-11'] },
-                          { id: 'pop-8', name: 'Good News!', gradient: 'bg-gradient-to-br from-green-600 to-emerald-800', tracks: ['track-16', 'track-3'] },
-                        ].map((playlist) => (
-                          <div
-                            key={playlist.id}
-                            onClick={() => {
-                              handlePlayTrack(playlist.tracks[0], playlist.tracks);
-                              showToast(`Sintonizando Playlist Pop: ${playlist.name}`);
-                            }}
-                            className="flex items-center gap-3 p-2 bg-[#1c1917]/30 border border-white/5 rounded-xl hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer group"
-                          >
-                            <div className={`w-11 h-11 rounded-xl ${playlist.gradient} flex items-center justify-center font-bold text-xs text-white shadow-inner flex-shrink-0 group-hover:scale-105 transition-transform duration-300`}>
-                              ♫
-                            </div>
-                            <div className="min-w-0">
-                              <span className="block text-xs font-semibold text-stone-200 group-hover:text-white transition-colors truncate">
-                                {playlist.name}
-                              </span>
-                              <span className="block text-[9px] text-stone-400">
-                                {playlist.tracks.length} músicas
-                              </span>
-                            </div>
+                      {(() => {
+                        const topPlayedTracks = [...TRACK_LIST]
+                          .filter(track => !isSongLocked(track.id))
+                          .sort((a, b) => (playCounts[b.id] || 0) - (playCounts[a.id] || 0))
+                          .slice(0, 8);
+
+                        return (
+                          <div className="grid grid-cols-2 gap-3">
+                            {topPlayedTracks.map((track, idx) => {
+                              const playCount = playCounts[track.id] || 0;
+                              const isThisActive = currentTrackId === track.id;
+                              return (
+                                <div
+                                  key={track.id}
+                                  onClick={() => handlePlayTrack(track.id, topPlayedTracks.map(t => t.id))}
+                                  className="flex items-center gap-3 p-2 bg-[#1c1917]/30 border border-white/5 rounded-xl hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer group relative overflow-hidden"
+                                >
+                                  <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 border border-white/5 shadow-md">
+                                    <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                      {isThisActive && isPlaying ? (
+                                        <Pause className="w-4 h-4 text-[#dfb26f] fill-[#dfb26f]" />
+                                      ) : (
+                                        <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+                                      )}
+                                    </div>
+                                    <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded bg-stone-950/80 backdrop-blur-sm border border-white/10 flex items-center justify-center text-[9px] font-black font-mono text-[#dfb26f]">
+                                      {idx + 1}
+                                    </div>
+                                  </div>
+
+                                  <div className="min-w-0 flex-1 text-left">
+                                    <span className={`block text-xs font-semibold truncate group-hover:text-[#dfb26f] transition-colors ${isThisActive ? 'text-[#dfb26f]' : 'text-stone-200'}`}>
+                                      {track.title}
+                                    </span>
+                                    <span className="block text-[9px] text-stone-400 truncate mt-0.5">
+                                      {track.artist}
+                                    </span>
+                                  </div>
+
+                                  <div className="text-right flex-shrink-0 pr-1">
+                                    <span className="block text-[9px] font-bold text-[#dfb26f] font-mono bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/10">
+                                      {formatPlayCount(playCount)}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })()}
                     </section>
 
                   </div>
