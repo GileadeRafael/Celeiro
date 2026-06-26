@@ -1,5 +1,32 @@
 import { Track, Playlist } from '../types';
 
+// Helper to resolve cover and audio assets based on environment (AI Studio vs. static Vercel deployment)
+export function getAssetUrl(localPath: string, driveId: string, type: 'image' | 'audio'): string {
+  if (typeof window === 'undefined') {
+    return localPath;
+  }
+  
+  const hostname = window.location.hostname;
+  // Check if we are running in the AI Studio container or local dev server
+  const isDevOrPreview = 
+    hostname === 'localhost' || 
+    hostname === '127.0.0.1' || 
+    hostname.includes('us-west2.run.app') ||
+    hostname.includes('gitpod.io') ||
+    hostname.includes('stackblitz.io');
+
+  if (isDevOrPreview) {
+    return localPath;
+  } else {
+    // Static hosting (Vercel) - direct Google Drive links bypass the missing Express backend
+    if (type === 'image') {
+      return `https://lh3.googleusercontent.com/d/${driveId}`;
+    } else {
+      return `https://docs.google.com/uc?export=download&id=${driveId}`;
+    }
+  }
+}
+
 // Helper to convert Google Drive sharing URLs to direct file links
 export function getDirectDriveUrl(url: string, type: 'image' | 'audio'): string {
   if (!url) return '';
@@ -24,14 +51,17 @@ export function getDirectDriveUrl(url: string, type: 'image' | 'audio'): string 
   return url;
 }
 
+const AUDIO_DRIVE_ID = '1JKcbSg-qApsUO7bnXoGS2LXKgZZGTdGl';
+const COVER_DRIVE_ID = '1HuLyBZi7Kg1WsbhmrOvRAg7BuYGF3WCq';
+
 export const TRACK_LIST: Track[] = [
   {
     id: 'track-1',
     title: 'Quem é Este?',
     artist: 'Cenáculo Music',
     album: 'Quem é Este? (Single)',
-    coverUrl: '/quem_e_este_capa.jpg',
-    audioUrl: '/quem_e_este.mp3',
+    coverUrl: getAssetUrl('/quem_e_este_capa.jpg', COVER_DRIVE_ID, 'image'),
+    audioUrl: getAssetUrl('/quem_e_este.mp3', AUDIO_DRIVE_ID, 'audio'),
     duration: 453,
     genre: 'Adoração',
     isNew: true,
@@ -55,7 +85,7 @@ export const SYSTEM_PLAYLISTS: Playlist[] = [
     id: 'playlist-adoracao',
     name: 'Worship Nacional',
     description: 'Os melhores louvores e canções de adoração profunda da atualidade.',
-    coverUrl: '/quem_e_este_capa.jpg',
+    coverUrl: getAssetUrl('/quem_e_este_capa.jpg', COVER_DRIVE_ID, 'image'),
     tracks: ['track-1'],
     type: 'system',
     creator: 'Celeiro Music',
@@ -65,7 +95,7 @@ export const SYSTEM_PLAYLISTS: Playlist[] = [
     id: 'playlist-gospel-pop',
     name: 'Gospel Pop & Hits',
     description: 'Sucessos modernos da música cristã contemporânea com energia.',
-    coverUrl: '/quem_e_este_capa.jpg',
+    coverUrl: getAssetUrl('/quem_e_este_capa.jpg', COVER_DRIVE_ID, 'image'),
     tracks: ['track-1'],
     type: 'system',
     creator: 'Celeiro Music',
@@ -75,7 +105,7 @@ export const SYSTEM_PLAYLISTS: Playlist[] = [
     id: 'playlist-pentecostal',
     name: 'Fé e Pentecostal',
     description: 'Canções inspiradoras de fé, intimidade com Deus e avivamento.',
-    coverUrl: '/quem_e_este_capa.jpg',
+    coverUrl: getAssetUrl('/quem_e_este_capa.jpg', COVER_DRIVE_ID, 'image'),
     tracks: ['track-1'],
     type: 'system',
     creator: 'Celeiro Music',
@@ -88,7 +118,7 @@ export const RADIO_STATIONS: Playlist[] = [
     id: 'radio-celeiro-gospel',
     name: 'Rádio Celeiro Worship',
     description: 'Louvor, adoração e palavra ao vivo 24 horas por dia.',
-    coverUrl: '/quem_e_este_capa.jpg',
+    coverUrl: getAssetUrl('/quem_e_este_capa.jpg', COVER_DRIVE_ID, 'image'),
     tracks: ['track-1'],
     type: 'radio',
     stationHz: '93.3 FM'
