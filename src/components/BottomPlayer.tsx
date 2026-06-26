@@ -43,6 +43,7 @@ interface BottomPlayerProps {
   synthActive?: boolean;
   customPlaylists: Playlist[];
   onAddToPlaylist: (playlistId: string, trackId: string) => void;
+  onCreatePlaylist?: () => void;
 }
 
 export default function BottomPlayer({
@@ -69,6 +70,7 @@ export default function BottomPlayer({
   onToggleFavorite,
   customPlaylists,
   onAddToPlaylist,
+  onCreatePlaylist,
 }: BottomPlayerProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -275,6 +277,19 @@ export default function BottomPlayer({
                       <span className="truncate">{playlist.name}</span>
                     </button>
                   ))
+                )}
+
+                {onCreatePlaylist && (
+                  <button
+                    onClick={() => {
+                      onCreatePlaylist();
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2 py-1.5 text-xs font-semibold text-[#dfb26f] hover:bg-white/5 rounded-lg transition-all text-left border-t border-white/5 mt-1 pt-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-[#dfb26f] shrink-0" />
+                    <span>Nova Playlist...</span>
+                  </button>
                 )}
               </div>
             </div>

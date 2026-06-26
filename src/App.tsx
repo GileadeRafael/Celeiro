@@ -14,6 +14,7 @@ import {
   Trash2,
   AlertCircle,
   FolderHeart,
+  FolderPlus,
   ChevronLeft,
   ChevronRight,
   Disc,
@@ -108,7 +109,7 @@ export default function App() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ history: playbackHistory }),
+          body: JSON.stringify({ history: [] }),
         });
         if (response.ok && active) {
           const data = await response.json();
@@ -126,7 +127,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [playbackHistory]);
+  }, []);
 
   // Featured Carousel slider index (for Novidades/Browse view)
   const [carouselIndex, setCarouselIndex] = useState<number>(0);
@@ -140,6 +141,7 @@ export default function App() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+  const [activeRecMenuId, setActiveRecMenuId] = useState<string | null>(null);
 
   // --- Custom Premium Toast Notification System ---
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -315,8 +317,21 @@ export default function App() {
 
   // --- Initialize Audio Element ---
   useEffect(() => {
-    audioRef.current = new Audio();
-    
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, []);
+
+  // --- Handle Audio Event Listeners ---
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
     const handleTimeUpdate = () => {
       if (!synthActive && audioRef.current) {
         setCurrentTime(audioRef.current.currentTime);
@@ -339,19 +354,16 @@ export default function App() {
       activateSynthFallback();
     };
 
-    audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
-    audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audioRef.current.addEventListener('ended', handleEnded);
-    audioRef.current.addEventListener('error', handleError);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
-        audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
-        audioRef.current.removeEventListener('ended', handleEnded);
-        audioRef.current.removeEventListener('error', handleError);
-        audioRef.current.pause();
-      }
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
       stopSynthTimer();
     };
   }, [currentTrackId, queue, repeatMode, isShuffle, synthActive]);
@@ -983,6 +995,7 @@ export default function App() {
                               onPlayNext={handlePlayNext}
                               customPlaylists={customPlaylists}
                               onAddToPlaylist={handleAddToPlaylist}
+                              onCreatePlaylist={handleCreatePlaylist}
                             />
                           ))}
                         </tbody>
@@ -1267,15 +1280,97 @@ export default function App() {
                                     <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-current' : ''}`} />
                                   </button>
 
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      showToast(`Opções para: ${track.title}`);
-                                    }}
-                                    className="p-1.5 rounded-lg text-stone-500 hover:text-white hover:bg-white/5 transition-all opacity-0 group-hover:opacity-100"
-                                  >
-                                    <MoreHorizontal className="w-3.5 h-3.5" />
-                                  </button>
+                                  <div className="relative">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveRecMenuId(activeRecMenuId === track.id ? null : track.id);
+                                      }}
+                                      className="p-1.5 rounded-lg text-stone-500 hover:text-white hover:bg-white/5 transition-all opacity-0 group-hover:opacity-100"
+                                    >
+                                      <MoreHorizontal className="w-3.5 h-3.5" />
+                                    </button>
+
+                                    {activeRecMenuId === track.id && (
+                                      <div 
+                                        className="absolute right-0 mt-2 w-56 rounded-lg bg-[#16120E] border border-[#2B221A] shadow-2xl z-50 py-1 text-left animate-fade-in"
+                                        onMouseLeave={() => setActiveRecMenuId(null)}
+                                      >
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handlePlayNext(track.id);
+                                            setActiveRecMenuId(null);
+                                          }}
+                                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-stone-300 hover:bg-brand hover:text-stone-950 transition-colors"
+                                        >
+                                          <Play className="w-3.5 h-3.5" />
+                                          Tocar a Seguir
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAddToQueue(track.id);
+                                            setActiveRecMenuId(null);
+                                          }}
+                                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-stone-300 hover:bg-brand hover:text-stone-950 transition-colors"
+                                        >
+                                          <ListPlus className="w-3.5 h-3.5" />
+                                          Adicionar à Fila
+                                        </button>
+
+                                        {/* Favorites option */}
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleFavorite(track.id);
+                                            setActiveRecMenuId(null);
+                                          }}
+                                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-stone-300 hover:bg-brand hover:text-stone-950 transition-colors"
+                                        >
+                                          <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-current text-[#dfb26f]' : ''}`} />
+                                          {isFav ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                                        </button>
+
+                                        {/* Playlist Sub-list */}
+                                        <div className="border-t border-[#261E17]/60 my-1 py-1">
+                                          <p className="px-3 py-1 text-[9px] font-bold text-brand/60 uppercase tracking-wider">Adicionar à Playlist</p>
+                                          {customPlaylists.length > 0 ? (
+                                            customPlaylists.map(pl => (
+                                              <button
+                                                key={pl.id}
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  handleAddToPlaylist(pl.id, track.id);
+                                                  setActiveRecMenuId(null);
+                                                }}
+                                                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-white transition-colors truncate pl-5 text-left"
+                                              >
+                                                <FolderPlus className="w-3 h-3 text-brand/50" />
+                                                <span className="truncate">{pl.name}</span>
+                                              </button>
+                                            ))
+                                          ) : (
+                                            <div className="px-5 py-1 text-[10px] text-stone-500 italic">
+                                              Nenhuma playlist
+                                            </div>
+                                          )}
+
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleCreatePlaylist();
+                                              setActiveRecMenuId(null);
+                                            }}
+                                            className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[#dfb26f] hover:bg-stone-800 hover:text-white transition-colors pl-5 text-left"
+                                          >
+                                            <Plus className="w-3 h-3 text-[#dfb26f]" />
+                                            <span>Nova Playlist...</span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             );
@@ -1463,6 +1558,7 @@ export default function App() {
                               onPlayNext={handlePlayNext}
                               customPlaylists={customPlaylists}
                               onAddToPlaylist={handleAddToPlaylist}
+                              onCreatePlaylist={handleCreatePlaylist}
                             />
                           ))}
                         </tbody>
@@ -1541,6 +1637,7 @@ export default function App() {
                                 onPlayNext={handlePlayNext}
                                 customPlaylists={customPlaylists}
                                 onAddToPlaylist={handleAddToPlaylist}
+                                onCreatePlaylist={handleCreatePlaylist}
                               />
                             ))}
                         </tbody>
@@ -1603,6 +1700,7 @@ export default function App() {
                               onPlayNext={handlePlayNext}
                               customPlaylists={customPlaylists}
                               onAddToPlaylist={handleAddToPlaylist}
+                              onCreatePlaylist={handleCreatePlaylist}
                             />
                           ))}
                         </tbody>
@@ -1798,6 +1896,7 @@ export default function App() {
                                 onPlayNext={handlePlayNext}
                                 customPlaylists={customPlaylists}
                                 onAddToPlaylist={handleAddToPlaylist}
+                                onCreatePlaylist={handleCreatePlaylist}
                                 onRemoveFromPlaylist={() => handleRemoveFromPlaylist(playlist.id, track.id)}
                                 showRemoveOption={playlist.type === 'custom'}
                               />
@@ -1841,6 +1940,7 @@ export default function App() {
           synthActive={synthActive}
           customPlaylists={customPlaylists}
           onAddToPlaylist={handleAddToPlaylist}
+          onCreatePlaylist={handleCreatePlaylist}
         />
 
         {/* 4. togglable Sliding Right-side Queue Drawer Panel */}
@@ -1961,6 +2061,7 @@ export default function App() {
           synthActive={synthActive}
           customPlaylists={customPlaylists}
           onAddToPlaylist={handleAddToPlaylist}
+          onCreatePlaylist={handleCreatePlaylist}
           trackList={TRACK_LIST}
           queue={queue}
           playbackHistory={playbackHistory}

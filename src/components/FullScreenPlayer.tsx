@@ -44,6 +44,7 @@ interface FullScreenPlayerProps {
   synthActive?: boolean;
   customPlaylists?: Playlist[];
   onAddToPlaylist?: (playlistId: string, trackId: string) => void;
+  onCreatePlaylist?: () => void;
   
   // Carousel flow props
   trackList: Track[];
@@ -77,6 +78,7 @@ export default function FullScreenPlayer({
   synthActive = false,
   customPlaylists = [],
   onAddToPlaylist,
+  onCreatePlaylist,
   
   trackList = [],
   queue = [],
@@ -595,6 +597,19 @@ export default function FullScreenPlayer({
                           <span className="truncate">{playlist.name}</span>
                         </button>
                       ))
+                    )}
+
+                    {onCreatePlaylist && (
+                      <button
+                        onClick={() => {
+                          onCreatePlaylist();
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-2 py-1.5 text-xs font-semibold text-[#dfb26f] hover:bg-white/5 rounded-lg transition-all text-left border-t border-white/5 mt-1 pt-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-[#dfb26f] shrink-0" />
+                        <span>Nova Playlist...</span>
+                      </button>
                     )}
                   </div>
                 </div>

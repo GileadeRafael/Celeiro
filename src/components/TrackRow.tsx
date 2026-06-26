@@ -32,6 +32,7 @@ interface TrackRowProps {
   onAddToPlaylist: (playlistId: string, trackId: string) => void;
   onRemoveFromPlaylist?: (trackId: string) => void; // If in a custom playlist
   showRemoveOption?: boolean;
+  onCreatePlaylist?: () => void;
 }
 
 export default function TrackRow({
@@ -49,7 +50,8 @@ export default function TrackRow({
   customPlaylists,
   onAddToPlaylist,
   onRemoveFromPlaylist,
-  showRemoveOption = false
+  showRemoveOption = false,
+  onCreatePlaylist
 }: TrackRowProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -190,7 +192,7 @@ export default function TrackRow({
 
             {showMenu && (
               <div 
-                className="absolute right-0 mt-2 w-56 rounded-lg bg-[#16120E] border border-[#2B221A] shadow-2xl z-50 py-1 text-left"
+                className="absolute right-0 mt-2 w-56 rounded-lg bg-[#16120E] border border-[#2B221A] shadow-2xl z-50 py-1 text-left animate-fade-in"
                 onMouseLeave={() => setShowMenu(false)}
               >
                 <button
@@ -214,11 +216,24 @@ export default function TrackRow({
                   Adicionar à Fila
                 </button>
 
+                {/* Favorites option */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(track.id);
+                    setShowMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs text-stone-300 hover:bg-brand hover:text-stone-950 transition-colors"
+                >
+                  <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-[#dfb26f]' : ''}`} />
+                  {isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                </button>
+
                 {/* Playlist Sub-list */}
-                {customPlaylists.length > 0 && (
-                  <div className="border-t border-[#261E17]/60 my-1 py-1">
-                    <p className="px-3 py-1 text-[9px] font-bold text-brand/60 uppercase tracking-wider">Adicionar à Playlist</p>
-                    {customPlaylists.map(pl => (
+                <div className="border-t border-[#261E17]/60 my-1 py-1">
+                  <p className="px-3 py-1 text-[9px] font-bold text-brand/60 uppercase tracking-wider">Adicionar à Playlist</p>
+                  {customPlaylists.length > 0 ? (
+                    customPlaylists.map(pl => (
                       <button
                         key={pl.id}
                         onClick={() => {
@@ -230,9 +245,26 @@ export default function TrackRow({
                         <FolderPlus className="w-3 h-3 text-brand/50" />
                         <span className="truncate">{pl.name}</span>
                       </button>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  ) : (
+                    <div className="px-5 py-1 text-[10px] text-stone-500 italic">
+                      Nenhuma playlist
+                    </div>
+                  )}
+
+                  {onCreatePlaylist && (
+                    <button
+                      onClick={() => {
+                        onCreatePlaylist();
+                        setShowMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[#dfb26f] hover:bg-stone-800 hover:text-white transition-colors pl-5"
+                    >
+                      <Plus className="w-3 h-3 text-[#dfb26f]" />
+                      <span>Nova Playlist...</span>
+                    </button>
+                  )}
+                </div>
 
                 {showRemoveOption && onRemoveFromPlaylist && (
                   <button
