@@ -1458,9 +1458,7 @@ export default function App() {
                     {/* Column 2: As Mais Ouvidas */}
                     <section className="space-y-4">
                       <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-white/[0.05] border border-white/5">
-                          <Sparkles className="w-4 h-4 text-brand animate-pulse" />
-                        </div>
+                        <span className="text-xl text-[#dfb26f]">♥</span>
                         <h3 className="text-[18px] font-bold text-white tracking-tight font-sans">
                           As Mais Ouvidas
                         </h3>
