@@ -1164,19 +1164,36 @@ export default function App() {
                             className="flex flex-col flex-shrink-0 w-[140px] md:w-[170px] snap-start group/card cursor-pointer" 
                             onClick={() => handlePlayTrack(track.id, TRACK_LIST.map(t => t.id))}
                           >
-                            <div className="relative aspect-square rounded-[24px] overflow-hidden border border-white/10 bg-stone-900 shadow-md">
-                              <img src={track.coverUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-115" />
+                            <div className="relative aspect-square rounded-[24px] overflow-hidden border border-white/10 bg-stone-950 shadow-md">
+                              <img 
+                                src={track.coverUrl} 
+                                className={`w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-115 ${isSongLocked(track.id) ? 'blur-[4px] opacity-50 grayscale' : ''}`} 
+                              />
                               
-                              {/* Play Button hover overlay */}
-                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                <div className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-350">
-                                  {isThisActive && isPlaying ? (
-                                    <Pause className="w-4 h-4 fill-current text-black" />
-                                  ) : (
-                                    <Play className="w-4 h-4 fill-current text-black ml-0.5" />
-                                  )}
+                              {isSongLocked(track.id) ? (
+                                <div className="absolute inset-0 bg-stone-950/50 backdrop-blur-md flex flex-col items-center justify-center p-3 text-center border border-white/10 rounded-[24px] transition-all duration-300">
+                                  <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-[#dfb26f] flex items-center justify-center mb-2 shadow-lg backdrop-blur-lg animate-pulse">
+                                    <Lock className="w-4.5 h-4.5 text-[#dfb26f]" />
+                                  </div>
+                                  <span className="text-[10px] tracking-widest font-black uppercase text-[#dfb26f] font-mono">
+                                    Disponível
+                                  </span>
+                                  <span className="text-xs font-black text-white tracking-tight mt-0.5 font-sans">
+                                    16/07 às 12:00h
+                                  </span>
                                 </div>
-                              </div>
+                              ) : (
+                                /* Play Button hover overlay */
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                  <div className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform scale-90 group-hover/card:scale-100 transition-transform duration-350">
+                                    {isThisActive && isPlaying ? (
+                                      <Pause className="w-4 h-4 fill-current text-black" />
+                                    ) : (
+                                      <Play className="w-4 h-4 fill-current text-black ml-0.5" />
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                             
                             <h3 className="text-xs font-bold text-white mt-3 leading-tight group-hover/card:text-[#dfb26f] transition-colors font-sans truncate">{track.title}</h3>
@@ -1252,18 +1269,29 @@ export default function App() {
                               >
                                 <div className="flex items-center gap-3 min-w-0">
                                   <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
-                                    <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                      <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                                    </div>
+                                    <img src={track.coverUrl} alt={track.title} className={`w-full h-full object-cover ${isSongLocked(track.id) ? 'blur-[1.5px] opacity-50 grayscale' : ''}`} />
+                                    {isSongLocked(track.id) ? (
+                                      <div className="absolute inset-0 bg-stone-950/60 flex items-center justify-center">
+                                        <Lock className="w-3.5 h-3.5 text-[#dfb26f] animate-pulse" />
+                                      </div>
+                                    ) : (
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                        <Play className="w-4 h-4 text-white fill-current ml-0.5" />
+                                      </div>
+                                    )}
                                   </div>
 
                                   <div className="min-w-0 text-left">
-                                    <span className={`block text-xs font-bold truncate ${isThisActive ? 'text-[#dfb26f]' : 'text-white'}`}>
+                                    <span className={`flex items-center gap-1.5 text-xs font-bold truncate ${isThisActive ? 'text-[#dfb26f]' : 'text-white'}`}>
                                       {track.title}
+                                      {isSongLocked(track.id) && (
+                                        <span className="px-1 py-0.2 text-[8px] font-black bg-amber-500/10 text-[#dfb26f] border border-amber-500/20 rounded font-mono uppercase">
+                                          16/07
+                                        </span>
+                                      )}
                                     </span>
                                     <span className="block text-[10px] text-stone-400 truncate mt-0.5">
-                                      {track.artist} • <span className="text-stone-500 font-medium">{track.genre}</span>
+                                      {isSongLocked(track.id) ? 'Lançamento em Breve' : `${track.artist} • ${track.genre}`}
                                     </span>
                                   </div>
                                 </div>

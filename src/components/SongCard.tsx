@@ -68,14 +68,14 @@ export default function SongCard({
 
         {/* Locked Overlay - Persistent on Capa (No Hover needed) */}
         {locked && (
-          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-3 text-center">
-            <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center mb-1.5 shadow-md">
-              <Lock className="w-4 h-4 animate-pulse" />
+          <div className="absolute inset-0 bg-stone-950/50 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center border border-white/10 rounded-xl transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-[#dfb26f] flex items-center justify-center mb-2 shadow-lg backdrop-blur-lg">
+              <Lock className="w-4.5 h-4.5 animate-pulse" />
             </div>
-            <span className="text-[10px] tracking-widest font-black uppercase text-amber-400 font-mono">
-              Em Breve
+            <span className="text-[10px] tracking-widest font-black uppercase text-[#dfb26f] font-mono">
+              Disponível
             </span>
-            <span className="text-xs font-bold text-white/90 mt-0.5 font-sans">
+            <span className="text-sm font-black text-white tracking-tight mt-0.5 font-sans">
               16/07 às 12:00h
             </span>
           </div>
