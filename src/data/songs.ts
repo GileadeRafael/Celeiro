@@ -1,5 +1,12 @@
 import { Track, Playlist } from '../types';
 
+export function isSongLocked(trackId: string): boolean {
+  if (trackId !== 'track-1') return false;
+  const releaseTime = new Date('2026-07-16T12:00:00');
+  const now = new Date();
+  return now < releaseTime;
+}
+
 // Helper to resolve cover and audio assets based on environment (AI Studio vs. static Vercel deployment)
 export function getAssetUrl(localPath: string, driveId: string, type: 'image' | 'audio'): string {
   if (typeof window === 'undefined') {

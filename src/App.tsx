@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 
 import { Track, Playlist, AppState } from './types';
-import { TRACK_LIST, SYSTEM_PLAYLISTS, RADIO_STATIONS } from './data/songs';
+import { TRACK_LIST, SYSTEM_PLAYLISTS, RADIO_STATIONS, isSongLocked } from './data/songs';
 import { audioSynthInstance } from './utils/audioSynth';
 
 import Sidebar from './components/Sidebar';
@@ -409,6 +409,13 @@ export default function App() {
   };
 
   const handlePlayTrack = (trackId: string, trackListContext: string[] = []) => {
+    // Check if the track is locked (e.g. "QUEM É ESTE?")
+    if (isSongLocked(trackId)) {
+      const track = TRACK_LIST.find(t => t.id === trackId);
+      showToast(`"${track?.title || 'Quem é Este?'}" estará disponível em 16/07 às 12:00h!`);
+      return;
+    }
+
     // Check offline constraints
     if (offlineMode && !downloaded.includes(trackId)) {
       showToast("Esta música não está baixada. Desative o Modo Offline para reproduzir.");

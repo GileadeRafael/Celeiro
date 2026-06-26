@@ -11,9 +11,11 @@ import {
   ListPlus,
   Volume2,
   CheckCircle,
-  FolderPlus
+  FolderPlus,
+  Lock
 } from 'lucide-react';
 import { Track, Playlist } from '../types';
+import { isSongLocked } from '../data/songs';
 
 interface TrackRowProps {
   key?: React.Key;
@@ -65,6 +67,8 @@ export default function TrackRow({
     return `${mins}:${remain < 10 ? '0' : ''}${remain}`;
   };
 
+  const locked = isSongLocked(track.id);
+
   return (
     <tr
       id={`track-row-${track.id}`}
@@ -75,12 +79,21 @@ export default function TrackRow({
       }}
       className={`group border-b border-[#261E17]/30 hover:bg-stone-900/40 transition-colors ${
         isActive ? 'bg-brand/5' : ''
-      }`}
+      } ${locked ? 'opacity-85' : ''}`}
     >
       {/* Index / Play / Pause Button */}
       <td className="py-3 pl-4 w-12 text-center text-sm font-medium">
         <div className="relative flex items-center justify-center w-6 h-6 mx-auto">
-          {isHovered ? (
+          {locked ? (
+            <button
+              id={`play-row-lock-${track.id}`}
+              onClick={() => onPlayPause(track.id)}
+              className="text-amber-500 hover:text-amber-400 hover:scale-110 active:scale-95 transition-all"
+              title="Música Bloqueada - Lançamento dia 16/07 às 12:00h"
+            >
+              <Lock className="w-4 h-4" />
+            </button>
+          ) : isHovered ? (
             <button
               id={`play-row-${track.id}`}
               onClick={() => onPlayPause(track.id)}
@@ -112,19 +125,33 @@ export default function TrackRow({
       {/* Title & Artist & Cover */}
       <td className="py-3 px-3">
         <div className="flex items-center gap-3">
-          <img
-            src={track.coverUrl}
-            alt={track.title}
-            className="w-10 h-10 rounded-md object-cover flex-shrink-0 shadow-md border border-[#261E17]/40"
-          />
+          <div className="relative flex-shrink-0">
+            <img
+              src={track.coverUrl}
+              alt={track.title}
+              className={`w-10 h-10 rounded-md object-cover shadow-md border border-[#261E17]/40 ${locked ? 'blur-[1.5px] opacity-50 grayscale' : ''}`}
+            />
+            {locked && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-md">
+                <Lock className="w-3.5 h-3.5 text-amber-500/90" />
+              </div>
+            )}
+          </div>
           <div className="min-w-0">
-            <span
-              className={`block text-sm font-medium truncate ${
-                isActive ? 'text-brand font-semibold' : 'text-stone-200'
-              }`}
-            >
-              {track.title}
-            </span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span
+                className={`block text-sm font-medium truncate ${
+                  isActive ? 'text-brand font-semibold' : 'text-stone-200'
+                }`}
+              >
+                {track.title}
+              </span>
+              {locked && (
+                <span className="px-1.5 py-0.5 text-[8px] font-black tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded font-mono uppercase flex-shrink-0">
+                  Bloqueada (16/07)
+                </span>
+              )}
+            </div>
             <span className="block text-xs text-stone-400 truncate group-hover:text-stone-300">
               {track.artist}
             </span>
