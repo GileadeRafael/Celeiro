@@ -355,11 +355,10 @@ export default function FullScreenPlayer({
                     <div
                       key={index}
                       ref={isLineActive ? activeLineRef : null}
-                      onClick={() => onSeek(line.time)}
-                      className={`w-full text-left text-sm md:text-base leading-relaxed transition-all duration-300 cursor-pointer rounded px-2 py-1 ${
+                      className={`w-full text-left text-sm md:text-base leading-relaxed transition-all duration-300 rounded px-2 py-1 ${
                         isLineActive 
                           ? 'text-[#dfb26f] font-bold bg-white/5 border-l-2 border-[#dfb26f] pl-2.5' 
-                          : 'text-stone-200 hover:text-white hover:bg-white/5'
+                          : 'text-stone-300/85'
                       }`}
                     >
                       {line.text}

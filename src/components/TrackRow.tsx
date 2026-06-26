@@ -154,24 +154,6 @@ export default function TrackRow({
             <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
 
-          {/* Quick Offline Download */}
-          <button
-            id={`download-btn-${track.id}`}
-            onClick={() => onToggleDownload(track.id)}
-            className={`p-1 rounded-full hover:bg-stone-850 transition-colors ${
-              isDownloaded
-                ? 'text-brand hover:text-brand-hover'
-                : 'text-stone-500 hover:text-stone-300 md:opacity-0 md:group-hover:opacity-100'
-            }`}
-            title={isDownloaded ? 'Música Baixada (Offline)' : 'Baixar para Ouvir Offline'}
-          >
-            {isDownloaded ? (
-              <CheckCircle className="w-3.5 h-3.5 text-brand fill-brand/10" />
-            ) : (
-              <Download className="w-3.5 h-3.5" />
-            )}
-          </button>
-
           {/* Album duration */}
           <span className="text-xs font-mono text-stone-500 group-hover:text-stone-300 w-10 text-right">
             {formatTime(track.duration)}

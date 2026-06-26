@@ -592,7 +592,8 @@ export default function App() {
         t => t.title.toLowerCase().includes(query) || 
              t.artist.toLowerCase().includes(query) ||
              t.album.toLowerCase().includes(query) ||
-             (t.genre && t.genre.toLowerCase().includes(query))
+             (t.genre && t.genre.toLowerCase().includes(query)) ||
+             (query === 'worship' && (t.genre?.toLowerCase() === 'adoração' || t.id === 'track-1'))
       );
     }
 
