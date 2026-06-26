@@ -1471,7 +1471,7 @@ export default function App() {
                           .slice(0, 8);
 
                         return (
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {topPlayedTracks.map((track, idx) => {
                               const playCount = playCounts[track.id] || 0;
                               const isThisActive = currentTrackId === track.id;

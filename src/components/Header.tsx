@@ -40,17 +40,17 @@ export default function Header({
       </div>
 
       {/* Middle: Centered Pill Navigation Tabs (Matches requested modal tabs) */}
-      <div className="flex-1 flex justify-center max-w-lg mx-auto">
-        <div className="flex p-1 bg-[#18181b]/85 border border-white/10 rounded-full backdrop-blur-md shadow-lg">
+      <div className="flex-1 flex justify-center max-w-lg mx-auto px-1">
+        <div className="flex p-1 bg-[#18181b]/85 border border-white/10 rounded-full backdrop-blur-md shadow-lg overflow-hidden shrink-0">
           <button
             onClick={() => setActiveTab('browse')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-1.5 rounded-full text-[11px] md:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'browse'
                 ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
+            <Play className="w-3 md:w-3.5 h-3 md:h-3.5 fill-current" />
             <span>Ouvindo agora</span>
           </button>
           
@@ -59,25 +59,25 @@ export default function Header({
               setActiveTab('search');
               setSearchQuery('');
             }}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-1.5 rounded-full text-[11px] md:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'search'
                 ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="w-3 md:w-3.5 h-3 md:h-3.5" />
             <span>Buscar</span>
           </button>
 
           <button
             onClick={() => setActiveTab('library-playlists')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-1.5 rounded-full text-[11px] md:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'library-playlists'
                 ? 'bg-[#dfb26f] text-stone-950 shadow-md font-bold'
                 : 'text-stone-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Music className="w-3.5 h-3.5" />
+            <Music className="w-3 md:w-3.5 h-3 md:h-3.5" />
             <span>Playlists</span>
           </button>
         </div>

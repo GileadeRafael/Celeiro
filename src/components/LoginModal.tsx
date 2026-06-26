@@ -238,7 +238,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }: LoginMod
               <div className="flex justify-between items-center mb-1.5">
                 <label className="block text-[10px] text-stone-500 font-bold uppercase tracking-wider">Senha</label>
                 {mode === 'signin' && (
-                  <span className="text-[10px] text-stone-500 hover:text-[#dfb26f] cursor-pointer transition-colors" onClick={() => alert('Para redefinir a senha, configure as variáveis de ambiente do Supabase no applet.')}>
+                  <span className="text-[10px] text-stone-500 hover:text-[#dfb26f] cursor-pointer transition-colors" onClick={() => setErrorMsg('Para redefinir a senha, configure as variáveis de ambiente do Supabase no applet.')}>
                     Esqueceu a senha?
                   </span>
                 )}

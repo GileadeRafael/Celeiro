@@ -220,7 +220,7 @@ export default function FullScreenPlayer({
           {prev2 && (
             <div 
               onClick={() => onSelectTrack(prev2.id)}
-              className="absolute left-[-10%] md:left-[5%] opacity-20 scale-50 md:scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
+              className="hidden lg:block absolute left-[5%] opacity-20 scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
               style={{
                 transform: 'rotateY(35deg) translateZ(-120px)',
                 transformStyle: 'preserve-3d'
@@ -229,7 +229,7 @@ export default function FullScreenPlayer({
               <img 
                 src={prev2.coverUrl} 
                 alt={prev2.title} 
-                className="w-32 h-32 md:w-48 md:h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
+                className="w-48 h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -239,7 +239,7 @@ export default function FullScreenPlayer({
           {prev1 && (
             <div 
               onClick={() => onSelectTrack(prev1.id)}
-              className="absolute left-[8%] md:left-[18%] opacity-60 scale-75 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-80 z-20 shrink-0"
+              className="hidden sm:block absolute left-[8%] md:left-[18%] opacity-40 scale-75 md:scale-80 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-85 z-20 shrink-0"
               style={{
                 transform: 'rotateY(25deg) translateZ(-60px)',
                 transformStyle: 'preserve-3d'
@@ -257,7 +257,7 @@ export default function FullScreenPlayer({
           {/* current */}
           {current && (
             <div 
-              className="relative scale-100 z-30 shrink-0 transition-all duration-500"
+              className="relative scale-90 md:scale-100 z-30 shrink-0 transition-all duration-500"
               style={{
                 transform: 'rotateY(0deg) translateZ(60px)',
                 transformStyle: 'preserve-3d'
@@ -266,7 +266,7 @@ export default function FullScreenPlayer({
               <img 
                 src={current.coverUrl} 
                 alt={current.title} 
-                className="w-48 h-48 md:w-72 md:h-72 rounded-[32px] object-cover shadow-[0_30px_70px_rgba(0,0,0,0.9)] border border-white/20"
+                className="w-44 h-44 md:w-72 md:h-72 rounded-[32px] object-cover shadow-[0_30px_70px_rgba(0,0,0,0.9)] border border-white/20"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -276,7 +276,7 @@ export default function FullScreenPlayer({
           {next1 && (
             <div 
               onClick={() => onSelectTrack(next1.id)}
-              className="absolute right-[8%] md:right-[18%] opacity-60 scale-75 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-80 z-20 shrink-0"
+              className="hidden sm:block absolute right-[8%] md:right-[18%] opacity-40 scale-75 md:scale-80 cursor-pointer transition-all duration-500 hover:opacity-85 hover:scale-85 z-20 shrink-0"
               style={{
                 transform: 'rotateY(-25deg) translateZ(-60px)',
                 transformStyle: 'preserve-3d'
@@ -295,7 +295,7 @@ export default function FullScreenPlayer({
           {next2 && (
             <div 
               onClick={() => onSelectTrack(next2.id)}
-              className="absolute right-[-10%] md:right-[5%] opacity-20 scale-50 md:scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
+              className="hidden lg:block absolute right-[5%] opacity-20 scale-60 cursor-pointer transition-all duration-500 hover:opacity-45 hover:scale-65 z-10 shrink-0"
               style={{
                 transform: 'rotateY(-35deg) translateZ(-120px)',
                 transformStyle: 'preserve-3d'
@@ -304,7 +304,7 @@ export default function FullScreenPlayer({
               <img 
                 src={next2.coverUrl} 
                 alt={next2.title} 
-                className="w-32 h-32 md:w-48 md:h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
+                className="w-48 h-48 rounded-[20px] object-cover shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-white/5"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -312,12 +312,12 @@ export default function FullScreenPlayer({
         </div>
 
         {/* Dynamic centered Song Name and Artist Pill */}
-        <div className="flex justify-center my-4 animate-fade-in shrink-0">
-          <div className="bg-white/[0.06] border border-white/10 px-8 py-3.5 rounded-full text-center inline-flex flex-col items-center justify-center backdrop-blur-md shadow-lg min-w-[240px] max-w-md">
-            <span className="text-base md:text-lg font-black text-white leading-tight truncate w-full px-2">
+        <div className="flex justify-center my-2 md:my-4 animate-fade-in shrink-0">
+          <div className="bg-white/[0.06] border border-white/10 px-6 md:px-8 py-2.5 md:py-3.5 rounded-full text-center inline-flex flex-col items-center justify-center backdrop-blur-md shadow-lg min-w-[200px] md:min-w-[240px] max-w-xs md:max-w-md">
+            <span className="text-sm md:text-lg font-black text-white leading-tight truncate w-full px-2">
               {current.title}
             </span>
-            <span className="text-xs md:text-sm text-[#8e8e93] font-semibold mt-1 truncate w-full px-2">
+            <span className="text-[10px] md:text-sm text-[#8e8e93] font-semibold mt-0.5 md:mt-1 truncate w-full px-2">
               {current.artist}
             </span>
           </div>
@@ -325,7 +325,7 @@ export default function FullScreenPlayer({
 
         {/* Slidable Karaoke Lyrics Pane */}
         {showLyrics && (
-          <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
+          <div className="absolute inset-x-4 top-4 bottom-4 md:inset-auto md:right-6 md:top-6 md:bottom-6 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-5 md:p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
             <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
               <h3 className="text-lg font-black text-white flex items-center gap-2">
                 <Mic className="w-4.5 h-4.5 text-[#dfb26f]" /> Letra da Música
@@ -372,7 +372,7 @@ export default function FullScreenPlayer({
 
         {/* Slidable Queue Pane */}
         {showQueue && (
-          <div className="absolute right-6 top-6 bottom-6 w-80 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
+          <div className="absolute inset-x-4 top-4 bottom-4 md:inset-auto md:right-6 md:top-6 md:bottom-6 md:w-96 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 z-40 p-5 md:p-6 flex flex-col rounded-[24px] shadow-2xl animate-slide-in-right">
             <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
               <h3 className="text-lg font-black text-white flex items-center gap-2">
                 <List className="w-4.5 h-4.5 text-[#dfb26f]" /> Seguintes
@@ -424,10 +424,12 @@ export default function FullScreenPlayer({
       </div>
 
       {/* Identical Floating Bottom Media Player bar */}
-      <footer className="p-6 md:p-10 shrink-0 w-full flex justify-center z-10">
+      <footer className="p-4 md:p-10 shrink-0 w-full flex justify-center z-10">
+        
+        {/* DESKTOP FOOTER IMMERSIVE CONTROLS */}
         <div 
           id="immersive-floating-player" 
-          className="w-[95%] md:w-[85%] max-w-4xl rounded-full bg-[#1c1c1e]/90 border border-white/10 px-6 py-3.5 shadow-[0_15px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-4 md:gap-6 select-none backdrop-blur-xl"
+          className="hidden md:flex w-[95%] md:w-[85%] max-w-4xl rounded-full bg-[#1c1c1e]/90 border border-white/10 px-6 py-3.5 shadow-[0_15px_50px_rgba(0,0,0,0.8)] items-center justify-between gap-4 md:gap-6 select-none backdrop-blur-xl"
         >
           
           {/* 1. LEFT CONTROLS SECTION */}
@@ -676,8 +678,156 @@ export default function FullScreenPlayer({
               />
             </div>
           </div>
-
         </div>
+
+        {/* MOBILE FOOTER IMMERSIVE CONTROLS (md:hidden) */}
+        <div className="flex md:hidden flex-col items-center w-full gap-5">
+          {/* Seek Bar Row */}
+          <div className="w-full space-y-1 px-2">
+            <div className="flex items-center w-full">
+              <input
+                id="immersive-mobile-scrubber"
+                type="range"
+                min={0}
+                max={duration || 100}
+                value={currentTime}
+                onChange={(e) => onSeek(parseFloat(e.target.value))}
+                className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
+                style={{
+                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[10px] font-mono text-stone-400">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+
+          {/* Media Buttons Row */}
+          <div className="flex items-center justify-between w-full max-w-xs px-2 text-stone-400">
+            {/* Shuffle */}
+            <button
+              onClick={onShuffleToggle}
+              className={`p-2 rounded-full active:scale-95 ${
+                isShuffle ? 'text-[#dfb26f]' : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <Shuffle className="w-4 h-4" />
+            </button>
+
+            {/* Previous */}
+            <button
+              onClick={onPrevious}
+              className="p-2 rounded-full text-stone-300 hover:text-white active:scale-90"
+            >
+              <SkipBack className="w-6 h-6 fill-current" />
+            </button>
+
+            {/* Play / Pause */}
+            <button
+              onClick={onPlayPause}
+              className="p-3.5 bg-white text-stone-950 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl"
+            >
+              {isPlaying ? (
+                <Pause className="w-6 h-6 fill-current" />
+              ) : (
+                <Play className="w-6 h-6 fill-current ml-0.5" />
+              )}
+            </button>
+
+            {/* Next */}
+            <button
+              onClick={onNext}
+              className="p-2 rounded-full text-stone-300 hover:text-white active:scale-90"
+            >
+              <SkipForward className="w-6 h-6 fill-current" />
+            </button>
+
+            {/* Repeat */}
+            <button
+              onClick={onRepeatToggle}
+              className={`p-2 rounded-full active:scale-95 relative ${
+                repeatMode !== 'none' ? 'text-[#dfb26f]' : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <Repeat className="w-4 h-4" />
+              {repeatMode === 'one' && (
+                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-[#dfb26f] text-black text-[7px] font-extrabold rounded-full flex items-center justify-center">
+                  1
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Secondary controls row: Lyrics, Queue, Options, Volume Mute */}
+          <div className="flex items-center justify-around w-full max-w-sm px-4 text-stone-400">
+            {/* Options */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className={`p-2 rounded-full ${
+                  isDropdownOpen ? 'text-white bg-white/5' : 'text-stone-400 hover:text-white'
+                }`}
+              >
+                <MoreHorizontal className="w-5 h-5" />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute bottom-12 left-0 w-48 bg-[#1c1c1e] border border-white/10 rounded-2xl shadow-2xl z-50 py-2 px-1 animate-fade-in text-stone-200">
+                  <button
+                    onClick={() => {
+                      onToggleFavorite();
+                      setIsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold hover:bg-white/5 rounded-xl transition-all text-left"
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'text-[#dfb26f] fill-current' : 'text-[#8e8e93]'}`} />
+                    <span>{isFavorite ? 'Remover Favorito' : 'Adicionar Favorito'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Lyrics Button */}
+            <button
+              onClick={() => {
+                setShowLyrics(!showLyrics);
+                setShowQueue(false);
+              }}
+              className={`p-2 rounded-full ${
+                showLyrics ? 'text-[#dfb26f] bg-[#dfb26f]/10' : 'text-stone-400 hover:text-white'
+              }`}
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+
+            {/* Queue Button */}
+            <button
+              onClick={() => {
+                setShowQueue(!showQueue);
+                setShowLyrics(false);
+              }}
+              className={`p-2 rounded-full ${
+                showQueue ? 'text-[#dfb26f] bg-[#dfb26f]/10' : 'text-stone-400'
+              }`}
+            >
+              <List className="w-5 h-5" />
+            </button>
+
+            {/* Mute Button */}
+            <button
+              onClick={onMuteToggle}
+              className="p-2 rounded-full text-stone-400"
+            >
+              {isMuted || volume === 0 ? (
+                <VolumeX className="w-5 h-5 text-[#dfb26f]" />
+              ) : (
+                <Volume2 className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
       </footer>
 
     </div>
