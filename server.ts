@@ -66,7 +66,7 @@ async function streamGoogleDriveFile(id: string, req: express.Request, res: expr
     }
 
     // Forward headers to client
-    const isImage = id === "1HuLyBZi7Kg1WsbhmrOvRAg7BuYGF3WCq";
+    const isImage = id === "1HuLyBZi7Kg1WsbhmrOvRAg7BuYGF3WCq" || id === "1fVT7J-TBsVBfcQYoSCJ5RIRyZSZ7P87E";
     const resHeaders: Record<string, string> = {
       "Content-Type": response.headers.get("Content-Type") || (isImage ? "image/jpeg" : "audio/mpeg"),
       "Cache-Control": "public, max-age=86400",
@@ -115,6 +115,16 @@ async function startServer() {
   // Direct route for "local-file-like" cover path
   app.get("/quem_e_este_capa.jpg", async (req, res) => {
     return streamGoogleDriveFile("1HuLyBZi7Kg1WsbhmrOvRAg7BuYGF3WCq", req, res);
+  });
+
+  // O Altar Está Pronto audio route
+  app.get("/o_altar_esta_pronto.mp3", async (req, res) => {
+    return streamGoogleDriveFile("1CuwSkKC_f1gd3sC9_zHc8akL2EqLUaaP", req, res);
+  });
+
+  // O Altar Está Pronto cover route
+  app.get("/o_altar_esta_pronto_capa.jpg", async (req, res) => {
+    return streamGoogleDriveFile("1fVT7J-TBsVBfcQYoSCJ5RIRyZSZ7P87E", req, res);
   });
 
   // API Route to stream audio from Google Drive bypassing iframe/cookie blocks
