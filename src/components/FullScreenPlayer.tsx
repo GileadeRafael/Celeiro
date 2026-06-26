@@ -336,7 +336,7 @@ export default function FullScreenPlayer({
             </div>
             <div 
               ref={lyricsContainerRef}
-              className="flex-1 overflow-y-auto pr-2 space-y-5 scroll-smooth select-none custom-scrollbar pb-10"
+              className="flex-1 overflow-y-auto pr-2 space-y-2.5 scroll-smooth select-text custom-scrollbar pb-10"
             >
               {current.lyrics.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-stone-500 text-sm italic">
@@ -346,19 +346,24 @@ export default function FullScreenPlayer({
                 current.lyrics.map((line, index) => {
                   const isLineActive = index === currentLineIndex;
 
+                  // Empty lines serve as clean paragraph breaks
+                  if (!line.text.trim()) {
+                    return <div key={index} className="h-5" />;
+                  }
+
                   return (
-                    <button
+                    <div
                       key={index}
                       ref={isLineActive ? activeLineRef : null}
                       onClick={() => onSeek(line.time)}
-                      className={`w-full text-left text-sm md:text-base font-bold tracking-tight transition-all duration-300 block cursor-pointer outline-none ${
+                      className={`w-full text-left text-sm md:text-base leading-relaxed transition-all duration-300 cursor-pointer rounded px-2 py-1 ${
                         isLineActive 
-                          ? 'text-[#dfb26f] scale-100 opacity-100 drop-shadow-[0_4px_12px_rgba(223,178,111,0.25)]' 
-                          : 'text-stone-400/40 hover:text-stone-300'
+                          ? 'text-[#dfb26f] font-bold bg-white/5 border-l-2 border-[#dfb26f] pl-2.5' 
+                          : 'text-stone-200 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {line.text}
-                    </button>
+                    </div>
                   );
                 })
               )}
