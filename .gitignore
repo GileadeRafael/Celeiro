@@ -6,5 +6,3 @@ coverage/
 *.log
 .env*
 !.env.example
-/public/quem_e_este.mp3
-/public/quem_e_este_capa.jpg
