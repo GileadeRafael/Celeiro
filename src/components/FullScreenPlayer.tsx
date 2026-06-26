@@ -51,6 +51,7 @@ interface FullScreenPlayerProps {
   queue: string[];
   playbackHistory: string[];
   onSelectTrack: (trackId: string) => void;
+  isLoggedIn?: boolean;
 }
 
 export default function FullScreenPlayer({
@@ -83,7 +84,8 @@ export default function FullScreenPlayer({
   trackList = [],
   queue = [],
   playbackHistory = [],
-  onSelectTrack
+  onSelectTrack,
+  isLoggedIn = false
 }: FullScreenPlayerProps) {
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
   const activeLineRef = useRef<HTMLButtonElement>(null);
@@ -522,9 +524,15 @@ export default function FullScreenPlayer({
                   </span>
                 </div>
 
-                <span className="text-[10px] md:text-xs font-mono font-bold text-stone-400 shrink-0 select-none">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </span>
+                {!isLoggedIn ? (
+                  <span className="bg-[#dfb26f]/15 border border-[#dfb26f]/30 text-[#dfb26f] text-[9px] md:text-[11px] font-extrabold tracking-wider px-2 py-0.5 md:px-2.5 md:py-1 rounded-md uppercase shrink-0 select-none">
+                    PRÉVIA
+                  </span>
+                ) : (
+                  <span className="text-[10px] md:text-xs font-mono font-bold text-stone-400 shrink-0 select-none">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                )}
               </div>
 
               {/* Scrubber track line */}
@@ -533,12 +541,12 @@ export default function FullScreenPlayer({
                   id="immersive-player-scrubber"
                   type="range"
                   min={0}
-                  max={duration || 100}
+                  max={isLoggedIn ? (duration || 100) : 30}
                   value={currentTime}
                   onChange={(e) => onSeek(parseFloat(e.target.value))}
                   className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                   style={{
-                    background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                    background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                   }}
                 />
               </div>
@@ -689,19 +697,27 @@ export default function FullScreenPlayer({
                 id="immersive-mobile-scrubber"
                 type="range"
                 min={0}
-                max={duration || 100}
+                max={isLoggedIn ? (duration || 100) : 30}
                 value={currentTime}
                 onChange={(e) => onSeek(parseFloat(e.target.value))}
                 className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                 style={{
-                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                 }}
               />
             </div>
-            <div className="flex items-center justify-between text-[10px] font-mono text-stone-400">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
+            {!isLoggedIn ? (
+              <div className="flex justify-center w-full py-0.5">
+                <span className="bg-[#dfb26f]/15 border border-[#dfb26f]/30 text-[#dfb26f] text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md uppercase select-none">
+                  PRÉVIA
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between text-[10px] font-mono text-stone-400">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            )}
           </div>
 
           {/* Media Buttons Row */}

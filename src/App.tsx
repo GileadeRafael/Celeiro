@@ -355,6 +355,20 @@ export default function App() {
     }
   }, [offlineMode]);
 
+  // Enforce 30 seconds preview limit for non-logged-in users
+  useEffect(() => {
+    if (!userProfile && currentTime >= 30) {
+      if (isPlaying) {
+        stopPlayback();
+        setCurrentTime(30);
+        if (!synthActive && audioRef.current) {
+          audioRef.current.currentTime = 30;
+        }
+        showToast("Você está ouvindo uma prévia. Faça login para ouvir o hino completo!");
+      }
+    }
+  }, [currentTime, userProfile, isPlaying, synthActive]);
+
   // --- Initialize Audio Element ---
   useEffect(() => {
     if (!audioRef.current) {
@@ -595,9 +609,14 @@ export default function App() {
   };
 
   const handleSeek = (time: number) => {
-    setCurrentTime(time);
+    let targetTime = time;
+    if (!userProfile && targetTime > 30) {
+      targetTime = 30;
+      showToast("Faça login para ouvir além dos 30 segundos iniciais!");
+    }
+    setCurrentTime(targetTime);
     if (!synthActive && audioRef.current) {
-      audioRef.current.currentTime = time;
+      audioRef.current.currentTime = targetTime;
     }
   };
 
@@ -2033,6 +2052,7 @@ export default function App() {
           customPlaylists={customPlaylists}
           onAddToPlaylist={handleAddToPlaylist}
           onCreatePlaylist={handleCreatePlaylist}
+          isLoggedIn={!!userProfile}
         />
 
         {/* 4. togglable Sliding Right-side Queue Drawer Panel */}
@@ -2158,6 +2178,7 @@ export default function App() {
           queue={queue}
           playbackHistory={playbackHistory}
           onSelectTrack={(trackId: string) => handlePlayTrack(trackId)}
+          isLoggedIn={!!userProfile}
         />
       )}
 

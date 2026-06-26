@@ -44,6 +44,7 @@ interface BottomPlayerProps {
   customPlaylists: Playlist[];
   onAddToPlaylist: (playlistId: string, trackId: string) => void;
   onCreatePlaylist?: () => void;
+  isLoggedIn?: boolean;
 }
 
 export default function BottomPlayer({
@@ -71,6 +72,7 @@ export default function BottomPlayer({
   customPlaylists,
   onAddToPlaylist,
   onCreatePlaylist,
+  isLoggedIn = false,
 }: BottomPlayerProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -200,9 +202,15 @@ export default function BottomPlayer({
               </div>
 
               {/* Live exact minutage instead of "Prévia" */}
-              <span className="text-[10px] md:text-xs font-mono font-bold text-stone-400 shrink-0 select-none">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
+              {!isLoggedIn ? (
+                <span className="bg-[#dfb26f]/15 border border-[#dfb26f]/30 text-[#dfb26f] text-[9px] md:text-[11px] font-extrabold tracking-wider px-2 py-0.5 md:px-2.5 md:py-1 rounded-md uppercase shrink-0 select-none">
+                  PRÉVIA
+                </span>
+              ) : (
+                <span className="text-[10px] md:text-xs font-mono font-bold text-stone-400 shrink-0 select-none">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
+              )}
             </div>
 
             {/* Scrubber track line */}
@@ -211,12 +219,12 @@ export default function BottomPlayer({
                 id="bottom-player-scrubber"
                 type="range"
                 min={0}
-                max={duration || 100}
+                max={isLoggedIn ? (duration || 100) : 30}
                 value={currentTime}
                 onChange={(e) => onSeek(parseFloat(e.target.value))}
                 className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#dfb26f] focus:outline-none"
                 style={{
-                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (duration || 100)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
+                  background: `linear-gradient(to right, #dfb26f 0%, #dfb26f ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) ${((currentTime / (isLoggedIn ? (duration || 100) : 30)) * 100).toFixed(2)}%, rgba(255, 255, 255, 0.1) 100%)`
                 }}
               />
             </div>
